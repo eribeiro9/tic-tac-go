@@ -5,7 +5,6 @@ import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { MatchType } from '../../enums/match-type.enum';
 import { GameService } from '../../services/game/game.service';
-import { SocketService } from '../../services/socket/socket.service';
 
 @UntilDestroy()
 @Component({
@@ -21,7 +20,6 @@ export class LobbyComponent implements OnInit {
   constructor(
     private readonly route: ActivatedRoute,
     private readonly router: Router,
-    private readonly socketService: SocketService,
     private readonly gameService: GameService,
   ) { }
 
@@ -47,7 +45,7 @@ export class LobbyComponent implements OnInit {
     ).subscribe(isHuman => {
       this.vsHuman.next(isHuman);
       if (isHuman) {
-        // start up socket stuff
+        this.gameService.setupHumanGame();
       } else {
         this.gameService.setupBotGame();
       }

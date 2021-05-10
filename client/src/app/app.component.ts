@@ -16,6 +16,7 @@ export class AppComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.router.navigate(['']);
     this.socketService.onDisconnect.subscribe(() => this.router.navigate(['']));
   }
 
