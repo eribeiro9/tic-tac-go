@@ -37,7 +37,7 @@ export class PlayComponent implements AfterViewInit {
 
   /** Sets up the PIXI.js canvas. One board with nine slots */
   private setupPIXIApp() {
-    this.app = new PIXI.Application({ width: 256, height: 256, backgroundColor: 0xCCCCCC });
+    this.app = new PIXI.Application({ width: 256, height: 256, backgroundColor: 0xAAAAAA });
     this.renderer.appendChild(this.renderSpace.nativeElement, this.app.view);
     this.app.loader
       .add([

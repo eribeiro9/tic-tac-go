@@ -7,6 +7,7 @@ import { PlayComponent } from './components/play/play.component';
 import { HomeComponent } from './components/home/home.component';
 import { PostgameComponent } from './components/postgame/postgame.component';
 import { LobbyComponent } from './components/lobby/lobby.component';
+import { LoaderComponent } from './components/loader/loader.component';
 
 @NgModule({
   declarations: [
@@ -14,7 +15,8 @@ import { LobbyComponent } from './components/lobby/lobby.component';
     PlayComponent,
     HomeComponent,
     PostgameComponent,
-    LobbyComponent
+    LobbyComponent,
+    LoaderComponent
   ],
   imports: [
     BrowserModule,

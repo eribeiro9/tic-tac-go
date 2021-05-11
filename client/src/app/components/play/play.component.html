@@ -3,8 +3,8 @@
 <ng-template #view let-state="state">
   <div class="full center column container with-buttons" [ngClass]="{ 'with-buttons': state.ended }">
     <div>VS {{ state.matchType | titlecase}}</div>
-    <div>You are {{ state.playerMark }}</div>
-    <div #renderSpace></div>
+    <div class="mark">You are {{ state.playerMark }}</div>
+    <div #renderSpace class="game"></div>
     <div>
       <ng-container *ngIf="!state.ended; else gameOver">{{ state.playerTurn ? 'Your' : 'Other Player\'s' }} Turn
       </ng-container>
