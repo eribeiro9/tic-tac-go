@@ -1,0 +1,52 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #aaa;
+}
+
+.container {
+  display: flex;
+  font-size: 1.5rem;
+
+  &.center {
+    justify-content: center;
+    align-items: center;
+  }
+
+  &.column {
+    flex-direction: column;
+  }
+}
+
+.full {
+  height: 100vh;
+
+  &.with-buttons {
+    height: calc(100vh - 2.5rem);
+  }
+}
+
+.half {
+  height: 50vh;
+}
+
+.quarter {
+  height: 25vh;
+}
+
+.fixed-buttons {
+  @extend .center, .container;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  height: 2.5rem;
+  background-color: #80cbc4;
+  cursor: pointer;
+
+  &>div {
+    flex-grow: 1;
+    text-align: center;
+  }
+}

@@ -1,0 +1,11 @@
+<div class="full center column container with-buttons">
+  <div>{{ (vsHuman | async) ? 'Finding' : 'Preparing' }}</div>
+  <div class="loader">
+    <app-loader></app-loader>
+  </div>
+  <div>Match</div>
+</div>
+
+<div class="fixed-buttons">
+  <div (click)="back()">Back</div>
+</div>
