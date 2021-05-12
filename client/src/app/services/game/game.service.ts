@@ -69,7 +69,7 @@ export class GameService {
   }
 
   private applyMove(state: GameState, x: number, y: number, mark: MarkType) {
-    state.board[x][y] = mark;
+    state.board[y][x] = mark;
     state.playerTurn = !state.playerTurn;
     if (RulesService.boardComplete(state.board)) {
       const info = RulesService.getWinningInfo(state.board);

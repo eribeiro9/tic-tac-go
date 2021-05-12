@@ -87,7 +87,7 @@ export class PlayComponent implements AfterViewInit {
       untilDestroyed(this),
     ).subscribe(state => {
       this.forEachSlot((x, y, name) => {
-        switch (state.board[x][y]) {
+        switch (state.board[y][x]) {
           case MarkType.Blank:
             this.sprites[name].texture = null;
             break;
