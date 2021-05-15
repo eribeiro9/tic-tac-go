@@ -1,26 +1,31 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { PlayComponent } from './components/play/play.component';
 import { HomeComponent } from './components/home/home.component';
-import { PostgameComponent } from './components/postgame/postgame.component';
-import { LobbyComponent } from './components/lobby/lobby.component';
 import { LoaderComponent } from './components/loader/loader.component';
+import { LobbyComponent } from './components/lobby/lobby.component';
+import { PlayComponent } from './components/play/play.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     PlayComponent,
     HomeComponent,
-    PostgameComponent,
     LobbyComponent,
     LoaderComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: environment.production,
+      // Register the ServiceWorker as soon as the app is stable
+      // or after 30 seconds (whichever comes first).
+      registrationStrategy: 'registerWhenStable:30000'
+    })
   ],
   providers: [],
   bootstrap: [AppComponent]

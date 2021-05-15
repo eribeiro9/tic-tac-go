@@ -1,7 +1,21 @@
 import { MarkType } from '../../enums/mark-type.enum';
 import { RulesService } from './rules.service';
 
-fdescribe('RulesService', () => {
+describe('RulesService', () => {
+
+  describe('oppositeMark', () => {
+    it('should handle Blank', () => {
+      expect(RulesService.oppositeMark(MarkType.Blank)).toEqual(MarkType.Blank);
+    });
+
+    it('should get opposite of O', () => {
+      expect(RulesService.oppositeMark(MarkType.O)).toEqual(MarkType.X);
+    });
+
+    it('should get opposite of X', () => {
+      expect(RulesService.oppositeMark(MarkType.X)).toEqual(MarkType.O);
+    });
+  });
 
   describe('botMove', () => {
     it('should complete bot doubles', () => {
@@ -29,6 +43,24 @@ fdescribe('RulesService', () => {
         [MarkType.Blank, MarkType.Blank, MarkType.Blank],
       ];
       expect(RulesService.botMove(board, MarkType.O)).toEqual({ x: 1, y: 0 });
+    });
+
+    it('should avoid being blocked', () => {
+      const board = [
+        [MarkType.O, MarkType.Blank, MarkType.X],
+        [MarkType.X, MarkType.Blank, MarkType.Blank],
+        [MarkType.Blank, MarkType.Blank, MarkType.Blank],
+      ];
+      expect(RulesService.botMove(board, MarkType.O)).not.toEqual({ x: 1, y: 0 });
+    });
+
+    it('should avoid being blocked', () => {
+      const board = [
+        [MarkType.O, MarkType.O, MarkType.X],
+        [MarkType.X, MarkType.Blank, MarkType.Blank],
+        [MarkType.Blank, MarkType.Blank, MarkType.Blank],
+      ];
+      expect(RulesService.botMove(board, MarkType.O)).not.toEqual({ x: 0, y: 2 });
     });
   });
 

@@ -18,6 +18,9 @@ const BOARD_TRIPLES = [
 
 export class RulesService {
 
+  /**
+   * Gets the "opposite" mark. O -> X, X -> O, Blank -> Blank.
+   */
   public static oppositeMark(mark: MarkType): MarkType {
     switch (mark) {
       case MarkType.O:
@@ -50,7 +53,7 @@ export class RulesService {
     }
 
     // Get any singles that can become doubles
-    const botSingles = triples.filter(t => t.value.filter(x => x === botMark).length === 1);
+    const botSingles = triples.filter(t => t.value.filter(x => x === botMark).length === 1 && t.value.filter(x => x === MarkType.Blank).length === 2);
     if (botSingles && botSingles.length > 0) {
       return botSingles[0].positions[botSingles[0].value.indexOf(MarkType.Blank)];
     }

@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { RouterTestingModule } from '@angular/router/testing';
 import { PlayComponent } from './play.component';
 
 describe('PlayComponent', () => {
@@ -8,9 +8,10 @@ describe('PlayComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PlayComponent ]
+      imports: [RouterTestingModule],
+      declarations: [PlayComponent]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { delay, filter, tap } from 'rxjs/operators';
+import { delay, filter } from 'rxjs/operators';
 import { MarkType } from '../../enums/mark-type.enum';
 import { MatchType } from '../../enums/match-type.enum';
 import { GameState } from '../../models/game-state.model';
@@ -43,12 +43,11 @@ export class GameService {
       untilDestroyed(this),
       delay(350),
       filter(state => !state.ended && !state.playerTurn),
-      tap(() => console.log('bot taking turn'))
     ).subscribe(state => this.botTurn(state));
   }
 
   public setupHumanGame() {
-    // socket service
+    this.socketService.startConnection();
   }
 
   public tryMakeMove(x: number, y: number) {

@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatchType } from '../../enums/match-type.enum';
+import { PwaService } from '../../services/pwa/pwa.service';
 
 @Component({
   selector: 'app-home',
@@ -8,11 +9,25 @@ import { MatchType } from '../../enums/match-type.enum';
   styleUrls: ['./home.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
+
+  public promptEvent: any;
 
   constructor(
     private readonly router: Router,
+    public readonly pwaService: PwaService
   ) { }
+
+  ngOnInit() {
+    if (this.pwaService.updateAvailable) {
+      window.location.reload();
+    }
+  }
+
+  @HostListener('beforeinstallprompt', ['$event'])
+  beforeInstallPrompt(event: any) {
+    this.promptEvent = event;
+  }
 
   // TODO: move to routerLink
   vsHuman() {
