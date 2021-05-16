@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, OnDestroy, Renderer2, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as PIXI from 'pixi.js';
@@ -14,7 +14,7 @@ import { GameService } from '../../services/game/game.service';
   styleUrls: ['./play.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PlayComponent implements AfterViewInit {
+export class PlayComponent implements AfterViewInit, OnDestroy {
 
   private app?: PIXI.Application;
   private resources: any = {};
@@ -32,6 +32,10 @@ export class PlayComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.setupPIXIApp();
+  }
+
+  ngOnDestroy() {
+    this.gameService.end();
   }
 
   goHome() {

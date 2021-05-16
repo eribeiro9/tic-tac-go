@@ -29,6 +29,7 @@ export class LobbyComponent implements OnInit {
   }
 
   back() {
+    this.gameService.end();
     this.router.navigate(['']);
   }
 

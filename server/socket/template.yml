@@ -1,0 +1,135 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform:
+- AWS::Serverless-2016-10-31
+
+Resources:
+  WebSocketsService:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./dist
+      Handler: lambda.handler
+      FunctionName: tictacgo
+      Description: handler for all things web sockets
+      Runtime: nodejs14.x
+      Timeout: 30
+      MemorySize: 512
+      Environment:
+        Variables:
+          NODE_ENV: production
+      Role: !GetAtt LambdaRole.Arn
+
+  LambdaPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn: WebSocketsService
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref WebSocketsService
+      Principal: apigateway.amazonaws.com
+
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Path: /
+      Description: Lambda role
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/CloudWatchFullAccess
+        - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+        - arn:aws:iam::aws:policy/AmazonAPIGatewayInvokeFullAccess
+
+  WebsocketApi:
+    DependsOn: WebSocketsService
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: tictacgo
+      ProtocolType: WEBSOCKET
+      RouteSelectionExpression: $request.body.message
+  
+  ConnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    DependsOn: LambdaIntegration
+    Properties:
+      ApiId: !Ref WebsocketApi
+      RouteKey: $connect
+      AuthorizationType: NONE
+      Target: !Join ["/", ["integrations", !Ref LambdaIntegration]]
+
+  DisconnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    DependsOn: LambdaIntegration
+    Properties:
+      ApiId: !Ref WebsocketApi
+      RouteKey: $disconnect
+      AuthorizationType: NONE
+      Target: !Join ["/", ["integrations", !Ref LambdaIntegration]]
+
+  OnPingRoute:
+    Type: AWS::ApiGatewayV2::Route
+    DependsOn: LambdaIntegration
+    Properties:
+      ApiId: !Ref WebsocketApi
+      RouteKey: ping
+      AuthorizationType: NONE
+      Target: !Join ["/", ["integrations", !Ref LambdaIntegration]]
+
+  GetDataOnConnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    DependsOn: LambdaIntegration
+    Properties:
+      ApiId: !Ref WebsocketApi
+      RouteKey: getDataOnConnect
+      AuthorizationType: NONE
+      Target: !Join ["/", ["integrations", !Ref LambdaIntegration]]
+
+  SendMessageRoute:
+    Type: AWS::ApiGatewayV2::Route
+    DependsOn: LambdaIntegration
+    Properties:
+      ApiId: !Ref WebsocketApi
+      RouteKey: sendMessage
+      AuthorizationType: NONE
+      Target: !Join ["/", ["integrations", !Ref LambdaIntegration]]
+
+  LambdaIntegration:
+    DependsOn: WebSocketsService
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref WebsocketApi
+      Description: WebSocketsService Lambda Integration
+      IntegrationType: AWS_PROXY
+      ConnectionType: INTERNET
+      IntegrationUri: !Sub
+        - arn:aws:apigateway:${Region}:lambda:path/2015-03-31/functions/${LambdaArn}/invocations
+        - Region: !Ref AWS::Region
+          LambdaArn: !GetAtt WebSocketsService.Arn
+
+  WebSocketsStage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      StageName: Stage
+      Description: Initial Stage
+      DeploymentId: !Ref InitDeployment
+      ApiId: !Ref WebsocketApi
+      DefaultRouteSettings:
+        LoggingLevel: ERROR
+        DataTraceEnabled: true
+
+  InitDeployment:
+    DependsOn:
+      - WebsocketApi
+      - ConnectRoute
+      - SendMessageRoute
+      - GetDataOnConnectRoute
+      - OnPingRoute
+      - DisconnectRoute
+      - LambdaIntegration
+    Type: AWS::ApiGatewayV2::Deployment
+    Properties:
+      ApiId: !Ref WebsocketApi
+      Description: CloudFormation deployment

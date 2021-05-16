@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { environment } from '../../../environments/environment';
 
 @Injectable({
@@ -7,17 +9,32 @@ import { environment } from '../../../environments/environment';
 })
 export class SocketService {
 
-  private connection?: WebSocket;
+  private socket?: WebSocketSubject<any>;
 
-  public onConnect = new Subject<void>();
+  public onMessage = new Subject<any>();
   public onDisconnect = new Subject<void>();
 
   constructor() { }
 
-  public startConnection(): Observable<void> {
-    this.connection = new WebSocket(environment.websocketURL);
-    this.connection.onopen = () => this.onConnect.next();
-    this.connection.onclose = () => this.onDisconnect.next();
-    return this.onConnect;
+  public connect(): Observable<any> {
+    this.socket = webSocket(environment.websocketURL);
+    this.socket.pipe(
+      tap(message => this.onMessage.next(message)),
+    ).subscribe();
+    this.socket.next({ message: 'getDataOnConnect' });
+    return this.onMessage;
+  }
+
+  public send(body: any = {}) {
+    if (this.socket) {
+      this.socket.next({ message: 'sendMessage', ...body });
+    }
+  }
+
+  public disconnect() {
+    if (this.socket) {
+      this.socket.complete();
+      delete this.socket;
+    }
   }
 }

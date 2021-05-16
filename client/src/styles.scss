@@ -35,6 +35,10 @@ html, body {
   height: 25vh;
 }
 
+.strikethrough {
+  text-decoration: line-through;
+}
+
 .fixed-buttons {
   @extend .center, .container;
   position: fixed;

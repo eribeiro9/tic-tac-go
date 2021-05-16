@@ -11,7 +11,12 @@
   <div class="line">
     <div class="color"></div>
   </div>
-  <div class="button center container" (click)="vsHuman()">VS Human</div>
+  <div class="button center column container" (click)="vsHuman()">
+    <span [ngClass]="{
+      'strikethrough': !(isConnected | async)
+    }">VS Human</span>
+    <small *ngIf="!(isConnected | async)">OFFLINE</small>
+  </div>
 </div>
 
 <div class="quarter">
