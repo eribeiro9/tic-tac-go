@@ -74,13 +74,13 @@ describe('RulesService', () => {
       expect(RulesService.boardComplete(board)).toBeFalse();
     });
 
-    it('should ignore tie game', () => {
+    it('should work for tie game', () => {
       const board = [
         [MarkType.X, MarkType.O, MarkType.X],
         [MarkType.O, MarkType.X, MarkType.X],
         [MarkType.O, MarkType.X, MarkType.O],
       ];
-      expect(RulesService.boardComplete(board)).toBeFalse();
+      expect(RulesService.boardComplete(board)).toBeTrue();
     });
 
     it('should work for first row', () => {

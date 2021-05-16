@@ -2,8 +2,9 @@ import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Renderer
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as PIXI from 'pixi.js';
-import { MarkTriple } from 'src/app/enums/mark-triple.enum';
+import { MarkTriple } from '../../enums/mark-triple.enum';
 import { MarkType } from '../../enums/mark-type.enum';
+import { MatchResult } from '../../enums/match-result.enum';
 import { GameService } from '../../services/game/game.service';
 
 @UntilDestroy()
@@ -18,6 +19,8 @@ export class PlayComponent implements AfterViewInit {
   private app?: PIXI.Application;
   private resources: any = {};
   private sprites: any = {};
+
+  MatchResult = MatchResult;
 
   @ViewChild('renderSpace', { read: ElementRef }) private renderSpace!: ElementRef;
 

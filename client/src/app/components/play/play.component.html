@@ -1,18 +1,24 @@
 <ng-container *ngTemplateOutlet="view; context: { state: (gameService.gameState | async) }"></ng-container>
 
 <ng-template #view let-state="state">
-  <div class="full center column container with-buttons" [ngClass]="{ 'with-buttons': state.ended }">
+  <div class="full center column container with-buttons"
+    [ngClass]="{ 'with-buttons': state.result !== MatchResult.None }">
     <div>VS {{ state.matchType | titlecase}}</div>
     <div class="mark">You are {{ state.playerMark }}</div>
     <div #renderSpace class="game"></div>
     <div>
-      <ng-container *ngIf="!state.ended; else gameOver">{{ state.playerTurn ? 'Your' : 'Other Player\'s' }} Turn
+      <ng-container *ngIf="state.result === MatchResult.None; else gameOver">
+        {{ state.playerTurn ? 'Your' : 'Other Player\'s' }} Turn
       </ng-container>
-      <ng-template #gameOver>{{ state.playerWon ? 'You Won' : 'You Lost' }}</ng-template>
+      <ng-template #gameOver [ngSwitch]="state.result">
+        <ng-container *ngSwitchCase="MatchResult.Tie">Tie Game</ng-container>
+        <ng-container *ngSwitchCase="MatchResult.PlayerWon">You Won</ng-container>
+        <ng-container *ngSwitchCase="MatchResult.OtherWon">You Lost</ng-container>
+      </ng-template>
     </div>
   </div>
 
-  <div *ngIf="state.ended" class="fixed-buttons">
+  <div *ngIf="state.result !== MatchResult.None" class="fixed-buttons">
     <div (click)="goHome()">Home</div>
   </div>
 </ng-template>

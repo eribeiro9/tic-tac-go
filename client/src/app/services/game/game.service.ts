@@ -3,6 +3,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { delay, filter } from 'rxjs/operators';
 import { MarkType } from '../../enums/mark-type.enum';
+import { MatchResult } from '../../enums/match-result.enum';
 import { MatchType } from '../../enums/match-type.enum';
 import { GameState } from '../../models/game-state.model';
 import { RandomUtils } from '../../utils/random.utils';
@@ -32,8 +33,7 @@ export class GameService {
         [MarkType.Blank, MarkType.Blank, MarkType.Blank],
         [MarkType.Blank, MarkType.Blank, MarkType.Blank],
       ],
-      ended: false,
-      playerWon: false,
+      result: MatchResult.None,
       winningTriples: [],
     });
 
@@ -42,7 +42,7 @@ export class GameService {
     this.gameState.pipe(
       untilDestroyed(this),
       delay(350),
-      filter(state => !state.ended && !state.playerTurn),
+      filter(state => state.result === MatchResult.None && !state.playerTurn),
     ).subscribe(state => this.botTurn(state));
   }
 
@@ -72,9 +72,14 @@ export class GameService {
     state.playerTurn = !state.playerTurn;
     if (RulesService.boardComplete(state.board)) {
       const info = RulesService.getWinningInfo(state.board);
-      state.ended = true;
-      state.playerWon = state.playerMark === info?.winningMark;
-      state.winningTriples = info?.winningTriples || [];
+      if (info.tieGame) {
+        state.result = MatchResult.Tie;
+      } else if (info.winningMark === state.playerMark) {
+        state.result = MatchResult.PlayerWon;
+      } else {
+        state.result = MatchResult.OtherWon;
+      }
+      state.winningTriples = info.winningTriples || [];
     }
     this.gameState.next(state);
   }

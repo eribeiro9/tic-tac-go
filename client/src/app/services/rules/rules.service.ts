@@ -1,5 +1,6 @@
 import { MarkTriple } from '../../enums/mark-triple.enum';
 import { MarkType } from '../../enums/mark-type.enum';
+import { MatchResult } from '../../enums/match-result.enum';
 import { GameState } from '../../models/game-state.model';
 import { WinningInfo } from '../../models/winning-info.model';
 
@@ -33,7 +34,7 @@ export class RulesService {
   }
 
   public static playerCanMove(state: GameState, x: number, y: number): boolean {
-    return !state.ended && state.playerTurn && state.board[y][x] === MarkType.Blank;
+    return state.result === MatchResult.None && state.playerTurn && state.board[y][x] === MarkType.Blank;
   }
 
   public static botMove(board: MarkType[][], botMark: MarkType): { x: number, y: number } {
@@ -83,18 +84,29 @@ export class RulesService {
    * @returns True/false if at least one three-in-a-row
    */
   public static boardComplete(board: MarkType[][]): boolean {
-    return this.getTriples(board)
+    const threeInRow = this.getTriples(board)
       .some(x => RulesService.tripleComplete(x.value));
+
+    if (threeInRow) {
+      return true;
+    }
+
+    const boardFull = board
+      .reduce((acc, val) => acc.concat(val), [])
+      .every(b => b !== MarkType.Blank);
+
+    return boardFull;
   }
 
-  public static getWinningInfo(board: MarkType[][]): WinningInfo | null {
+  public static getWinningInfo(board: MarkType[][]): WinningInfo {
     const winningTriples = this.getTriples(board)
       .filter(x => RulesService.tripleComplete(x.value));
 
     if (winningTriples && winningTriples.length > 0) {
-      return { winningMark: winningTriples[0].value[0], winningTriples: winningTriples.map(w => w.name) };
+      return { winningMark: winningTriples[0].value[0], winningTriples: winningTriples.map(w => w.name), tieGame: false };
+    } else {
+      return { tieGame: true, winningMark: MarkType.Blank, winningTriples: [] };
     }
-    return null;
   }
 
   /**
