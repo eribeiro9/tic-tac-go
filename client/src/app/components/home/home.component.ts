@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, HostListener, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { MatchType } from '../../enums/match-type.enum';
@@ -13,12 +12,13 @@ import { PwaService } from '../../services/pwa/pwa.service';
 })
 export class HomeComponent implements OnInit {
 
+  MatchType = MatchType;
+
   public promptEvent: any;
   public isConnected = new BehaviorSubject(false);
 
   constructor(
-    private readonly router: Router,
-    public readonly pwaService: PwaService
+    private readonly pwaService: PwaService
   ) { }
 
   ngOnInit() {
@@ -34,17 +34,6 @@ export class HomeComponent implements OnInit {
   @HostListener('beforeinstallprompt', ['$event'])
   beforeInstallPrompt(event: any) {
     this.promptEvent = event;
-  }
-
-  // TODO: move to routerLink
-  vsHuman() {
-    if (this.isConnected.value) {
-      this.router.navigate(['lobby'], { queryParams: { match: MatchType.Human } });
-    }
-  }
-
-  vsBot() {
-    this.router.navigate(['lobby'], { queryParams: { match: MatchType.Bot } });
   }
 
 }

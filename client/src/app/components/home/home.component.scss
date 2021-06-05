@@ -1,37 +1,14 @@
-.title {
-  font-size: 2.5rem;
-  font-weight: bold;
-  text-shadow: -1px -1px 0px rgb(0 0 0 / 50%);
-}
+@import '../../../styles/flex';
+@import '../../../styles/mixins';
+@import '../../../styles/variables';
 
-.title-2 {
-  margin-left: 10px;
-}
+.home {
+  @extend .column;
 
-.title-3 {
-  margin-left: 20px;
-}
-
-.title-4 {
-  margin-left: 55px;
-}
-
-$line-padding: 5px;
-$line-height: 1px;
-
-.line {
-  padding: $line-padding;
-
-  .color {
-    width: 100%;
-    height: $line-height;
-    background-color: #888;
+  @include media-breakpoint-up(sm) {
+    flex-direction: row !important;
+    &>* {
+      flex-grow: 1;
+    }
   }
-}
-
-.button {
-  height: calc(100% - 2 * #{$line-padding} - #{$line-height});
-  width: 100%;
-  font-size: 1.5rem;
-  cursor: pointer;
 }

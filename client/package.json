@@ -4,7 +4,13 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "prebuild": "npm install --no-bin-links",
+    "build": "ng build -c production",
+    "predeploy": "npm run build",
+    "deploy": "npm run aws-clear-s3 && npm run aws-upload && npm run aws-invalidate-cf",
+    "aws-clear-s3": "aws s3 rm s3://www.tictacgo.xyz --recursive",
+    "aws-upload": "aws s3 cp dist/client s3://www.tictacgo.xyz/ --recursive",
+    "aws-invalidate-cf": "aws cloudfront create-invalidation --distribution-id EXO7TGEDQ3KLS --paths \"/*\" | true",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"

@@ -1,0 +1,33 @@
+.full {
+  height: 100vh;
+
+  &.with-buttons {
+    height: calc(100vh - 2.5rem);
+  }
+}
+
+.half {
+  height: 50vh;
+}
+
+.quarter {
+  height: 25vh;
+}
+
+.strikethrough {
+  text-decoration: line-through;
+}
+
+.disabled {
+  cursor: not-allowed;
+}
+
+.logo {
+  width: 200px;
+  height: 200px;
+
+  @include media-breakpoint-up(sm) {
+    width: 400px;
+    height: 400px;
+  }
+}

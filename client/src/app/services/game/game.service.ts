@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, Subject, Subscription } from 'rxjs';
 import { delay, filter, take, tap } from 'rxjs/operators';
 import { MarkType } from '../../enums/mark-type.enum';
 import { MatchResult } from '../../enums/match-result.enum';
@@ -15,6 +15,8 @@ import { SocketService } from '../socket/socket.service';
   providedIn: 'root'
 })
 export class GameService {
+
+  private subscriptions: Subscription[] = [];
 
   public gameState = new BehaviorSubject<GameState>(new GameState());
   public onStart = new Subject<void>();
@@ -39,27 +41,27 @@ export class GameService {
 
     this.onStart.next();
 
-    this.gameState.pipe(
+    this.subscriptions.push(this.gameState.pipe(
       untilDestroyed(this),
       delay(350),
       filter(state => state.result === MatchResult.None && !state.playerTurn),
-    ).subscribe(state => this.botTurn(state));
+    ).subscribe(state => this.botTurn(state)));
   }
 
   public setupHumanGame() {
-    this.socketService.onMessage.pipe(
+    this.subscriptions.push(this.socketService.onMessage.pipe(
       tap(message => {
         this.gameState.next({
           matchType: MatchType.Human,
           ...message,
         });
       }),
-    ).subscribe();
+    ).subscribe());
 
-    this.socketService.connect().pipe(
+    this.subscriptions.push(this.socketService.connect().pipe(
       take(1),
       tap(() => this.onStart.next()),
-    ).subscribe();
+    ).subscribe());
   }
 
   public tryMakeMove(x: number, y: number) {
@@ -74,6 +76,11 @@ export class GameService {
   }
 
   public end() {
+    if (this.subscriptions.length > 0) {
+      this.subscriptions.forEach(s => s.unsubscribe());
+      this.subscriptions = [];
+    }
+
     const state = this.gameState.value;
     if (state.matchType === MatchType.Human) {
       this.socketService.disconnect();

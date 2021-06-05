@@ -1,0 +1,37 @@
+<svg version="1.1" id="L9" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+  viewBox="0 0 200 200" enable-background="new 0 0 0 0" xml:space="preserve">
+  <style>
+    .line {
+      fill: none;
+      stroke: #000000;
+      stroke-width: 3;
+      stroke-linecap: butt;
+      stroke-linejoin: miter;
+      stroke-opacity: 1;
+      stroke-miterlimit: 4;
+      stroke-dasharray: none;
+    }
+
+    .text {
+      font: bold 36px sans-serif;
+    }
+
+    .circle {
+      fill: #ffffff;
+      stroke: none;
+    }
+  </style>
+
+  <circle cx="100" cy="100" r="94" class="circle"/>
+
+  <path d="M66,12L66,188" class="line"></path>
+  <path d="M134,12L134,188" class="line"></path>
+  <path d="M12,66L188,66" class="line"></path>
+  <path d="M12,134L188,134" class="line"></path>
+
+  <text x="10" y="50" class="text">Tic</text>
+  <text x="70" y="110" class="text">Tac</text>
+  <text x="15" y="175" class="text">on</text>
+  <text x="75" y="175" class="text">the</text>
+  <text x="140" y="175" class="text">Go!</text>
+</svg>

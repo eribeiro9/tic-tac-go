@@ -5,7 +5,6 @@ import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './components/home/home.component';
-import { LoaderComponent } from './components/loader/loader.component';
 import { LobbyComponent } from './components/lobby/lobby.component';
 import { PlayComponent } from './components/play/play.component';
 
@@ -15,7 +14,6 @@ import { PlayComponent } from './components/play/play.component';
     PlayComponent,
     HomeComponent,
     LobbyComponent,
-    LoaderComponent
   ],
   imports: [
     BrowserModule,
