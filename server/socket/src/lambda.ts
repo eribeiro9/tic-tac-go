@@ -14,28 +14,14 @@ const requestRepo = new RequestRepository();
 const gameService = new GameService(gameRepo);
 const socketService = new SocketService(requestRepo, playerRepo, gameService);
 
-export async function handler(event: APIGatewayProxyEvent, context: Context, callback: Callback) {
+export async function handler(event: APIGatewayProxyEvent, context: Context, callback: Callback): Promise<void> {
   try {
     switch (event.requestContext.eventType) {
       case 'CONNECT':
         await socketService.connect(event.requestContext.connectionId);
         break;
       case 'MESSAGE':
-        console.log(event.body);
-        switch (event.requestContext.routeKey) {
-          case 'getDataOnConnect':
-            await socketService.getDataOnConnect(event.requestContext.connectionId);
-            break;
-          case 'sendMessage':
-            const body = JSON.parse(event.body);
-            const x = body.x || 0;
-            const y = body.y || 0;
-            await socketService.sendMessage(event.requestContext.connectionId, x, y);
-            break;
-          default:
-            console.warn('Unhandled Message', event.requestContext.routeKey, event.requestContext.connectionId);
-            break;
-        }
+        await handleMessage(event);
         break;
       case 'DISCONNECT':
         await socketService.disconnect(event.requestContext.connectionId);
@@ -53,5 +39,23 @@ export async function handler(event: APIGatewayProxyEvent, context: Context, cal
   } catch (ex) {
     console.error(ex);
     callback(ex);
+  }
+}
+
+async function handleMessage(event: APIGatewayProxyEvent) {
+  switch (event.requestContext.routeKey) {
+    case 'getDataOnConnect':
+      await socketService.getDataOnConnect(event.requestContext.connectionId);
+      break;
+    case 'sendMessage':
+      const body = JSON.parse(event.body);
+      console.log('body', body);
+      const x = body.x ?? 0;
+      const y = body.y ?? 0;
+      await socketService.sendMessage(event.requestContext.connectionId, x, y);
+      break;
+    default:
+      console.warn('Unhandled Message', event.requestContext.routeKey, event.requestContext.connectionId);
+      break;
   }
 }

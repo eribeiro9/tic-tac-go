@@ -4,6 +4,7 @@ import { MatchResult } from '../enums/match-result.enum';
 import { GameState } from '../models/game-state.model';
 import { Game } from '../models/game.model';
 import { GameRepository } from '../repositories/game.repository';
+import { RandomUtils } from '../utils/random.utils';
 
 export class GameService {
 
@@ -11,19 +12,25 @@ export class GameService {
     private gameRepo: GameRepository,
   ) { }
 
-  public get(gameId: string) {
+  public get(gameId: string): Promise<Game> {
     return this.gameRepo.get(gameId);
   }
 
-  public async create(connectionId1: string, connectionId2: string) {
+  public async create(connectionId1: string, connectionId2: string): Promise<{
+    gameId: string,
+    gameState: GameState,
+  }> {
     try {
       const gameId = uuidv4();
       const gameState: GameState = {
-        turn: MarkType.O,
-        connections: {
+        turn: RandomUtils.chooseFrom(MarkType.O, MarkType.X),
+        connections: RandomUtils.chooseFrom({
           o: connectionId1,
           x: connectionId2,
-        },
+        }, {
+          o: connectionId2,
+          x: connectionId1,
+        }),
         board: [
           [MarkType.Blank, MarkType.Blank, MarkType.Blank],
           [MarkType.Blank, MarkType.Blank, MarkType.Blank],
@@ -43,7 +50,8 @@ export class GameService {
   }
 
   public async play(game: Game, connectionId: string, x: number, y: number): Promise<{
-    valid: boolean, gameState?: GameState
+    valid: boolean,
+    gameState?: GameState,
   }> {
     try {
       const mark = game.state.connections.o === connectionId ? MarkType.O : MarkType.X;
@@ -73,7 +81,7 @@ export class GameService {
     }
   }
 
-  public delete(gameId: string) {
+  public delete(gameId: string): Promise<void> {
     return this.gameRepo.delete(gameId);
   }
 

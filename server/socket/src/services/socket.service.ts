@@ -16,7 +16,7 @@ export class SocketService extends SocketBase {
     super();
   }
 
-  public async connect(connectionId: string) {
+  public async connect(connectionId: string): Promise<void> {
     try {
       console.log('Connecting', connectionId);
       const requests = await this.requestRepo.getAll();
@@ -34,7 +34,7 @@ export class SocketService extends SocketBase {
         ]);
         console.log('Created players and removed request');
       } else {
-        console.log('No existing request. Creating new one')
+        console.log('No existing request. Creating new one');
         await this.requestRepo.create(connectionId);
       }
     } catch (ex) {
@@ -43,7 +43,7 @@ export class SocketService extends SocketBase {
     }
   }
 
-  public async getDataOnConnect(connectionId: string) {
+  public async getDataOnConnect(connectionId: string): Promise<void> {
     try {
       console.log('Checking In', connectionId);
 
@@ -64,7 +64,7 @@ export class SocketService extends SocketBase {
     }
   }
 
-  public async sendMessage(connectionId: string, x: number, y: number) {
+  public async sendMessage(connectionId: string, x: number, y: number): Promise<void> {
     try {
       console.log('Player trying to make a move', connectionId, x, y);
 
@@ -90,7 +90,7 @@ export class SocketService extends SocketBase {
     }
   }
 
-  public async disconnect(connectionId: string) {
+  public async disconnect(connectionId: string): Promise<void> {
     try {
       console.log('Disconnecting', connectionId);
 
@@ -103,7 +103,7 @@ export class SocketService extends SocketBase {
           console.log('Found game. Updating players with state');
 
           if (game.state.result === MatchResult.None) {
-            console.log('Game still in progress. Setting winner.')
+            console.log('Game still in progress. Setting winner.');
             const winner = connectionId === game.state.connections.o ? MarkType.X : MarkType.O;
             game.state.result = winner === MarkType.O ? MatchResult.OWon : MatchResult.XWon;
           }

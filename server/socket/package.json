@@ -1,7 +1,7 @@
 {
   "scripts": {
     "lint": "eslint . --ext .ts",
-    "prebuild": "npm install --no-bin-links && npm run lint",
+    "prebuild": "npm install && npm run lint",
     "build": "rm -rf dist && tsc",
     "prepare-dist": "cp package.json ./dist && cd ./dist && npm i --only prod && cd ..",
     "predeploy": "npm run build && npm run prepare-dist",

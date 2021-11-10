@@ -10,6 +10,11 @@
     "plugin:@typescript-eslint/recommended"
   ],
   "rules": {
-    "no-case-declarations": "off"
+    "no-case-declarations": "off",
+    "comma-dangle": [
+      "error",
+      "only-multiline"
+    ],
+    "semi": "error"
   }
 }

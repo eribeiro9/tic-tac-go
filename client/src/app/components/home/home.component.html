@@ -7,12 +7,12 @@
     <div class="quarter center container">
       <div>
         <ng-container *ngIf="(isConnected | async) else notConnected">
-          <a class="button" [routerLink]="['/lobby']" [queryParams]="{match: MatchType.Human}">VS Human</a>
+          <a class="button" [routerLink]="['/lobby']" [queryParams]="{match: MatchType.Human}">Online Game</a>
         </ng-container>
 
         <ng-template #notConnected>
           <div class="button center column container">
-            <span class="strikethrough">VS Human</span>
+            <span class="strikethrough">Online Game</span>
             <small>OFFLINE</small>
           </div>
         </ng-template>
@@ -21,7 +21,7 @@
 
     <div class="quarter center container">
       <div>
-        <a class="button" [routerLink]="['/lobby']" [queryParams]="{match: MatchType.Bot}">VS Bot</a>
+        <a class="button" [routerLink]="['/lobby']" [queryParams]="{match: MatchType.Bot}">Solo Game</a>
       </div>
     </div>
   </div>
