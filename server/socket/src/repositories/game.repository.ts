@@ -1,8 +1,10 @@
+import { Injectable } from '@nestjs/common';
 import { DynamoBase } from '../bases/dynamo.base';
 import { TableType } from '../enums/table-type.enum';
 import { GameState } from '../models/game-state.model';
 import { Game } from '../models/game.model';
 
+@Injectable()
 export class GameRepository extends DynamoBase {
 
   constructor() {

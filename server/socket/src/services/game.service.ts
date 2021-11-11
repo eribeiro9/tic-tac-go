@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { MarkType } from '../enums/mark-type.enum';
 import { MatchResult } from '../enums/match-result.enum';
@@ -6,10 +7,11 @@ import { Game } from '../models/game.model';
 import { GameRepository } from '../repositories/game.repository';
 import { RandomUtils } from '../utils/random.utils';
 
+@Injectable()
 export class GameService {
 
   constructor(
-    private gameRepo: GameRepository,
+    private readonly gameRepo: GameRepository,
   ) { }
 
   public get(gameId: string): Promise<Game> {

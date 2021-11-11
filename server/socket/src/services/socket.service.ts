@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { SocketBase } from '../bases/socket.base';
 import { MarkType } from '../enums/mark-type.enum';
 import { MatchResult } from '../enums/match-result.enum';
@@ -6,12 +7,13 @@ import { PlayerRepository } from '../repositories/player.repository';
 import { RequestRepository } from '../repositories/request.repository';
 import { GameService } from './game.service';
 
+@Injectable()
 export class SocketService extends SocketBase {
 
   constructor(
-    private requestRepo: RequestRepository,
-    private playerRepo: PlayerRepository,
-    private gameService: GameService,
+    private readonly requestRepo: RequestRepository,
+    private readonly playerRepo: PlayerRepository,
+    private readonly gameService: GameService,
   ) {
     super();
   }
