@@ -5,6 +5,7 @@ import * as PIXI from 'pixi.js';
 import { MarkTriple } from '../../enums/mark-triple.enum';
 import { MarkType } from '../../enums/mark-type.enum';
 import { MatchResult } from '../../enums/match-result.enum';
+import { MatchType } from '../../enums/match-type.enum';
 import { GameService } from '../../services/game/game.service';
 
 @UntilDestroy()
@@ -21,6 +22,7 @@ export class PlayComponent implements AfterViewInit, OnDestroy {
   private sprites: any = {};
 
   MatchResult = MatchResult;
+  MatchType = MatchType;
 
   @ViewChild('renderSpace', { read: ElementRef }) private renderSpace!: ElementRef;
 
