@@ -31,12 +31,12 @@ export class SocketController {
       case 'getDataOnConnect':
         await this.socketService.getDataOnConnect(event.requestContext.connectionId);
         break;
-      case 'sendMessage':
+      case 'tryMakeMove':
         const body = JSON.parse(event.body);
         console.log('body', body);
         const x = body.x ?? 0;
         const y = body.y ?? 0;
-        await this.socketService.sendMessage(event.requestContext.connectionId, x, y);
+        await this.socketService.tryMakeMove(event.requestContext.connectionId, x, y);
         break;
       default:
         console.warn('Unhandled Message', event.requestContext.routeKey, event.requestContext.connectionId);

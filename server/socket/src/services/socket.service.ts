@@ -66,7 +66,7 @@ export class SocketService extends SocketBase {
     }
   }
 
-  public async sendMessage(connectionId: string, x: number, y: number): Promise<void> {
+  public async tryMakeMove(connectionId: string, x: number, y: number): Promise<void> {
     try {
       console.log('Player trying to make a move', connectionId, x, y);
 
