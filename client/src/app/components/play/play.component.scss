@@ -6,3 +6,46 @@
 .mark {
   padding: 2rem 0;
 }
+
+$board-size: 256px;
+$slot-size: $board-size / 3;
+
+.board {
+  position: relative;
+  width: $board-size;
+  height: $board-size;
+
+  .background {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+}
+
+.slot {
+  position: absolute;
+  width: $slot-size - 10;
+  height: $slot-size - 10;
+
+  @for $x from 0 through 2 {
+    @for $y from 0 through 2 {
+      &.slot#{($x + 3 * $y) + 1} {
+        top: $slot-size * $y + 5 * $y;
+        left: $slot-size * $x + 5 * $x;
+      }
+    }
+  }
+}
+
+.line {
+  fill: none;
+  stroke: #ffee00;
+  stroke-width: 15;
+  stroke-linecap: butt;
+  stroke-linejoin: miter;
+  stroke-opacity: 0.5;
+  stroke-miterlimit: 4;
+  stroke-dasharray: none;
+}
