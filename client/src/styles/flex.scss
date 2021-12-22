@@ -1,17 +1,23 @@
 .container {
   display: flex;
   font-size: 1.5rem;
+}
 
-  &.center {
-    justify-content: center;
-    align-items: center;
-  }
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+}
 
-  &.column {
-    flex-direction: column;
-  }
+.center {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
 
-  &.row {
-    flex-direction: row;
-  }
+.column {
+  flex-direction: column;
+}
+
+.row {
+  flex-direction: row;
 }

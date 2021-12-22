@@ -16,12 +16,12 @@ export class SocketService {
 
   constructor() { }
 
-  public connect(): Observable<any> {
+  public connect(settings: any): Observable<any> {
     this.socket = webSocket(environment.websocketURL);
     this.socket.pipe(
       tap(message => this.onMessage.next(message)),
     ).subscribe();
-    this.socket.next({ message: 'getDataOnConnect' });
+    this.socket.next({ message: 'getDataOnConnect', ...settings });
     return this.onMessage;
   }
 

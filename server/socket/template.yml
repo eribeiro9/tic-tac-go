@@ -50,15 +50,6 @@ Resources:
       Name: tictacgo
       ProtocolType: WEBSOCKET
       RouteSelectionExpression: $request.body.message
-  
-  ConnectRoute:
-    Type: AWS::ApiGatewayV2::Route
-    DependsOn: LambdaIntegration
-    Properties:
-      ApiId: !Ref WebsocketApi
-      RouteKey: $connect
-      AuthorizationType: NONE
-      Target: !Join ["/", ["integrations", !Ref LambdaIntegration]]
 
   DisconnectRoute:
     Type: AWS::ApiGatewayV2::Route
@@ -114,7 +105,6 @@ Resources:
   InitDeployment:
     DependsOn:
       - WebsocketApi
-      - ConnectRoute
       - SendMessageRoute
       - GetDataOnConnectRoute
       - DisconnectRoute

@@ -2,10 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { MarkType } from '../enums/mark-type.enum';
 import { MatchResult } from '../enums/match-result.enum';
-import { GameState } from '../models/game-state.model';
+import { DEFAULT_ICON_COLOR, GameState } from '../models/game-state.model';
 import { Game } from '../models/game.model';
 import { GameRepository } from '../repositories/game.repository';
 import { RandomUtils } from '../utils/random.utils';
+
+export class GameCreate {
+  id: string;
+  color: string;
+}
 
 @Injectable()
 export class GameService {
@@ -18,25 +23,32 @@ export class GameService {
     return this.gameRepo.get(gameId);
   }
 
-  public async create(connectionId1: string, connectionId2: string): Promise<{
+  public async create(connectionInfo1: GameCreate, connectionInfo2: GameCreate): Promise<{
     gameId: string,
     gameState: GameState,
   }> {
     try {
       const gameId = uuidv4();
+      const conn1IsO = RandomUtils.chooseFrom(true, false);
       const gameState: GameState = {
         turn: RandomUtils.chooseFrom(MarkType.O, MarkType.X),
-        connections: RandomUtils.chooseFrom({
-          o: connectionId1,
-          x: connectionId2,
-        }, {
-          o: connectionId2,
-          x: connectionId1,
-        }),
+        connections: {
+          o: conn1IsO ? connectionInfo1.id : connectionInfo2.id,
+          x: !conn1IsO ? connectionInfo1.id : connectionInfo2.id,
+        },
+        playerColors: {
+          o: conn1IsO ? connectionInfo1.color : connectionInfo2.color,
+          x: !conn1IsO ? connectionInfo1.color : connectionInfo2.color,
+        },
         board: [
           [MarkType.Blank, MarkType.Blank, MarkType.Blank],
           [MarkType.Blank, MarkType.Blank, MarkType.Blank],
           [MarkType.Blank, MarkType.Blank, MarkType.Blank],
+        ],
+        colors: [
+          ['', '', ''],
+          ['', '', ''],
+          ['', '', ''],
         ],
         result: MatchResult.None,
         winningTriples: [],
@@ -57,8 +69,10 @@ export class GameService {
   }> {
     try {
       const mark = game.state.connections.o === connectionId ? MarkType.O : MarkType.X;
+      const color = mark === MarkType.O ? game.state.playerColors.o : game.state.playerColors.x;
       if (GameState.canPlay(game.state, mark, x, y)) {
         game.state.board[y][x] = mark;
+        game.state.colors[y][x] = color || DEFAULT_ICON_COLOR;
         game.state.turn = game.state.turn === MarkType.O ? MarkType.X : MarkType.O;
         if (GameState.boardComplete(game.state.board)) {
           const info = GameState.getWinningInfo(game.state.board);

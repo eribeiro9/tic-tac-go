@@ -1,0 +1,22 @@
+.setting {
+  margin-top: 4rem;
+
+  h3 {
+    margin: 0 0 1rem 0;
+  }
+
+  p {
+    margin: 0 0 0.5rem 0;
+  }
+}
+
+.color {
+  width: 2rem;
+  height: 2rem;
+  margin: 1rem 2rem;
+  border-radius: 5px;
+
+  &.selected {
+    box-shadow: 0 0 0 5px white;
+  }
+}

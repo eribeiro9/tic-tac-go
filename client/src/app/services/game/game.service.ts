@@ -10,6 +10,8 @@ import { RandomUtils } from '../../utils/random.utils';
 import { RulesService } from '../rules/rules.service';
 import { SocketService } from '../socket/socket.service';
 
+const DEFAULT_ICON_COLOR = '#000000';
+
 @UntilDestroy()
 @Injectable({
   providedIn: 'root'
@@ -26,14 +28,21 @@ export class GameService {
   ) { }
 
   public setupBotGame() {
+    const { playerColor } = this.getPlayerSettings();
     this.gameState.next({
       matchType: MatchType.Bot,
       playerMark: RandomUtils.ChooseFrom(MarkType.O, MarkType.X),
       playerTurn: RandomUtils.ChooseFrom(false, true),
+      playerColor,
       board: [
         [MarkType.Blank, MarkType.Blank, MarkType.Blank],
         [MarkType.Blank, MarkType.Blank, MarkType.Blank],
         [MarkType.Blank, MarkType.Blank, MarkType.Blank],
+      ],
+      colors: [
+        ['', '', ''],
+        ['', '', ''],
+        ['', '', ''],
       ],
       result: MatchResult.None,
       winningTriples: [],
@@ -58,10 +67,18 @@ export class GameService {
       }),
     ).subscribe());
 
-    this.subscriptions.push(this.socketService.connect().pipe(
+    const settings = this.getPlayerSettings();
+    this.subscriptions.push(this.socketService.connect(settings).pipe(
       take(1),
       tap(() => this.onStart.next()),
     ).subscribe());
+  }
+
+  private getPlayerSettings() {
+    const playerColor = localStorage.getItem('playerColor') ?? '';
+    return {
+      playerColor,
+    };
   }
 
   public tryMakeMove(x: number, y: number) {
@@ -95,7 +112,13 @@ export class GameService {
 
   private applyMove(state: GameState, x: number, y: number, mark: MarkType) {
     state.board[y][x] = mark;
+    const color = state.playerColor && mark === state.playerMark
+      ? state.playerColor
+      : DEFAULT_ICON_COLOR;
+    state.colors[y][x] = color;
+
     state.playerTurn = !state.playerTurn;
+
     if (RulesService.boardComplete(state.board)) {
       const info = RulesService.getWinningInfo(state.board);
       if (info.tieGame) {
@@ -107,6 +130,7 @@ export class GameService {
       }
       state.winningTriples = info.winningTriples || [];
     }
+
     this.gameState.next(state);
   }
 

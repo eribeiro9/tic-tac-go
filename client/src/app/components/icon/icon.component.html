@@ -3,8 +3,7 @@
   <style>
     .line {
       fill: none;
-      stroke: #000000;
-      stroke-width: 3;
+      stroke-width: 5;
       stroke-linecap: butt;
       stroke-linejoin: miter;
       stroke-opacity: 1;
@@ -13,6 +12,10 @@
     }
   </style>
 
-  <path d="M0,0L100,100" class="line"></path>
-  <path d="M0,100L100,0" class="line"></path>
+  <circle *ngIf="icon === MarkType.O" cx="50" cy="50" r="48" class="line" [style.stroke]="color" />
+
+  <ng-container *ngIf="icon === MarkType.X">
+    <path d="M0,0L100,100" class="line" [style.stroke]="color"></path>
+    <path d="M0,100L100,0" class="line" [style.stroke]="color"></path>
+  </ng-container>
 </svg>

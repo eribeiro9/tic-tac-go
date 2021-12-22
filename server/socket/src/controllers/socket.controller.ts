@@ -11,9 +11,6 @@ export class SocketController {
 
   async handleEvent(event: APIGatewayProxyEvent) {
     switch (event.requestContext.eventType) {
-      case 'CONNECT':
-        await this.socketService.connect(event.requestContext.connectionId);
-        break;
       case 'MESSAGE':
         await this.handleMessage(event);
         break;
@@ -27,13 +24,15 @@ export class SocketController {
   }
 
   private async handleMessage(event: APIGatewayProxyEvent) {
+    const body = JSON.parse(event.body);
+    console.log('body', body);
+
     switch (event.requestContext.routeKey) {
       case 'getDataOnConnect':
-        await this.socketService.getDataOnConnect(event.requestContext.connectionId);
+        const playerColor = body.playerColor;
+        await this.socketService.getDataOnConnect(event.requestContext.connectionId, playerColor);
         break;
       case 'sendMessage':
-        const body = JSON.parse(event.body);
-        console.log('body', body);
         const x = body.x ?? 0;
         const y = body.y ?? 0;
         await this.socketService.tryMakeMove(event.requestContext.connectionId, x, y);

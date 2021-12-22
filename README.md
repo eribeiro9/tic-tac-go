@@ -1,4 +1,6 @@
 # tic-tac-go
+AKA "Tic Tac on the Go!"
+
 Source code for https://www.tictacgo.xyz
 
 - 100% AWS Serverless Progressive Web App

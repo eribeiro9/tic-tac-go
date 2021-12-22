@@ -7,6 +7,8 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './components/home/home.component';
 import { LobbyComponent } from './components/lobby/lobby.component';
 import { PlayComponent } from './components/play/play.component';
+import { SettingsComponent } from './components/settings/settings.component';
+import { IconComponent } from './components/icon/icon.component';
 
 @NgModule({
   declarations: [
@@ -14,6 +16,8 @@ import { PlayComponent } from './components/play/play.component';
     PlayComponent,
     HomeComponent,
     LobbyComponent,
+    SettingsComponent,
+    IconComponent,
   ],
   imports: [
     BrowserModule,

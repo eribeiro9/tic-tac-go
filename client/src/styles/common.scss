@@ -18,6 +18,10 @@
   text-decoration: line-through;
 }
 
+.clickable {
+  cursor: pointer;
+}
+
 .disabled {
   cursor: not-allowed;
 }
@@ -29,5 +33,16 @@
   @include media-breakpoint-up(sm) {
     width: 400px;
     height: 400px;
+  }
+}
+
+.top-right {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+
+  .icon {
+    width: 3rem;
+    height: 3rem;
   }
 }

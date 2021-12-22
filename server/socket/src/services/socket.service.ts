@@ -18,47 +18,33 @@ export class SocketService extends SocketBase {
     super();
   }
 
-  public async connect(connectionId: string): Promise<void> {
+  public async getDataOnConnect(connectionId: string, playerColor: string): Promise<void> {
     try {
       console.log('Connecting', connectionId);
       const requests = await this.requestRepo.getAll();
       if (requests && requests.length > 0) {
-        const requestConnectionId = requests[0];
-        console.log('Found existing request from', requestConnectionId);
+        const request = requests[0];
+        console.log('Found existing request from', request.connectionId);
 
-        const { gameId } = await this.gameService.create(connectionId, requestConnectionId);
+        const { gameId, gameState } = await this.gameService.create({
+          id: connectionId,
+          color: playerColor,
+        }, {
+          id: request.connectionId,
+          color: request.playerColor,
+        });
         console.log('Created new game', gameId);
 
         await Promise.all([
           this.playerRepo.create(connectionId, gameId),
-          this.playerRepo.create(requestConnectionId, gameId),
-          this.requestRepo.delete(requestConnectionId),
+          this.playerRepo.create(request.connectionId, gameId),
+          this.requestRepo.delete(request.connectionId),
+          this.emitState(gameState),
         ]);
         console.log('Created players and removed request');
       } else {
         console.log('No existing request. Creating new one');
-        await this.requestRepo.create(connectionId);
-      }
-    } catch (ex) {
-      console.error(ex);
-      throw ex;
-    }
-  }
-
-  public async getDataOnConnect(connectionId: string): Promise<void> {
-    try {
-      console.log('Checking In', connectionId);
-
-      const player = await this.playerRepo.get(connectionId);
-      if (player && player.gameId) {
-        console.log('Found player in game', player.gameId);
-
-        const game = await this.gameService.get(player.gameId);
-        if (game && game.state) {
-          console.log('Found game. Updating players with state');
-
-          await this.emitState(game.state);
-        }
+        await this.requestRepo.create(connectionId, playerColor);
       }
     } catch (ex) {
       console.error(ex);

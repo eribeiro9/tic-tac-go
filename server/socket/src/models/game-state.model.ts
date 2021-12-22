@@ -3,6 +3,8 @@ import { MarkType } from '../enums/mark-type.enum';
 import { ClientMatchResult, MatchResult } from '../enums/match-result.enum';
 import { WinningInfo } from './winning-info.model';
 
+export const DEFAULT_ICON_COLOR = '#000000';
+
 const BOARD_TRIPLES = [
   { name: MarkTriple.Row1, positions: [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 2, y: 0 }] },
   { name: MarkTriple.Row2, positions: [{ x: 0, y: 1 }, { x: 1, y: 1 }, { x: 2, y: 1 }] },
@@ -18,8 +20,13 @@ const BOARD_TRIPLES = [
 
 export class GameState {
   board: MarkType[][];
+  colors: string[][];
   turn: MarkType.O | MarkType.X;
   connections: {
+    o: string;
+    x: string;
+  };
+  playerColors: {
     o: string;
     x: string;
   };
@@ -28,15 +35,20 @@ export class GameState {
 
   public static toClientFacing(state: GameState, connectionId: string) {
     let playerMark = MarkType.Blank;
+    let playerColor = DEFAULT_ICON_COLOR;
     if (connectionId === state.connections.o) {
       playerMark = MarkType.O;
+      playerColor = state.playerColors.o || playerColor;
     } else if (connectionId === state.connections.x) {
       playerMark = MarkType.X;
+      playerColor = state.playerColors.x || playerColor;
     }
 
     return {
       board: state.board,
+      colors: state.colors,
       playerMark,
+      playerColor,
       playerTurn: state.result === MatchResult.None && state.turn === playerMark,
       result: GameState.resultToClient(state.result, playerMark),
       winningTriples: state.winningTriples,

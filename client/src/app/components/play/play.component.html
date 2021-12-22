@@ -6,7 +6,7 @@
     <div>{{ state.matchType === MatchType.Bot ? 'Solo Game' : 'Online Game' }}</div>
     <div class="mark">You are {{ state.playerMark }}</div>
     <ng-container *ngTemplateOutlet="gameBoard; context: {
-      board: state.board, winningTriples: state.winningTriples
+      board: state.board, colors: state.colors, winningTriples: state.winningTriples
     }"></ng-container>
     <div>
       <ng-container *ngIf="state.result === MatchResult.None; else gameOver">
@@ -25,35 +25,30 @@
   </div>
 </ng-template>
 
-<ng-template #gameBoard let-board="board" let-winningTriples="winningTriples">
+<ng-template #gameBoard let-board="board" let-colors="colors" let-winningTriples="winningTriples">
   <div class="game board">
     <img src="assets/svg/tictactoe-board.svg" class="background">
 
     <ng-container *ngFor="let x of [0,1,2]">
       <ng-container *ngFor="let y of [0,1,2]">
-        <ng-container *ngTemplateOutlet="slot; context: { y: y, x: x, id: 'slot' + ((x + 3 * y) + 1) }"></ng-container>
+        <div (click)="gameService.tryMakeMove(x, y)">
+          <app-icon [icon]="board[y][x]" [color]="colors[y][x]" class="slot slot{{(x + 3 * y) + 1}}">
+          </app-icon>
+        </div>
       </ng-container>
     </ng-container>
 
-    <ng-container *ngFor="let triple of winningTriples">
-      <svg viewBox="0 0 100 100">
-        <path *ngIf="triple === MarkTriple.Row1" d="M0,17L100,17" class="line"></path>
+    <svg viewBox="0 0 100 100">
+      <ng-container *ngFor="let triple of winningTriples">
+        <path *ngIf="triple === MarkTriple.Row1" d="M0,15L100,15" class="line"></path>
         <path *ngIf="triple === MarkTriple.Row2" d="M0,50L100,50" class="line"></path>
-        <path *ngIf="triple === MarkTriple.Row3" d="M0,67L100,67" class="line"></path>
-        <path *ngIf="triple === MarkTriple.Column1" d="M17,0L17,100" class="line"></path>
+        <path *ngIf="triple === MarkTriple.Row3" d="M0,85L100,85" class="line"></path>
+        <path *ngIf="triple === MarkTriple.Column1" d="M15,0L15,100" class="line"></path>
         <path *ngIf="triple === MarkTriple.Column2" d="M50,0L50,100" class="line"></path>
-        <path *ngIf="triple === MarkTriple.Column3" d="M67,0L67,100" class="line"></path>
+        <path *ngIf="triple === MarkTriple.Column3" d="M85,0L85,100" class="line"></path>
         <path *ngIf="triple === MarkTriple.Diagonal1" d="M0,0L100,100" class="line"></path>
         <path *ngIf="triple === MarkTriple.Diagonal2" d="M0,100L100,0" class="line"></path>
-      </svg>
-    </ng-container>
+      </ng-container>
+    </svg>
   </div>
-
-  <ng-template #slot let-x="x" let-y="y" let-id="id">
-    <div (click)="gameService.tryMakeMove(x, y)">
-      <div class="slot {{id}}"></div>
-      <img *ngIf="board[y][x] === MarkType.O" src="assets/svg/tictactoe-o.svg" class="slot {{id}}">
-      <img *ngIf="board[y][x] === MarkType.X" src="assets/svg/tictactoe-x.svg" class="slot {{id}}">
-    </div>
-  </ng-template>
 </ng-template>

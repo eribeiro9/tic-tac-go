@@ -22,7 +22,7 @@ export class PlayerRepository extends DynamoBase {
     }
   }
 
-  public async create(connectionId: string, gameId: string) {
+  public async create(connectionId: string, gameId = '') {
     try {
       await this.putItem({
         pk: TableType.Player,

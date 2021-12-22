@@ -7,7 +7,9 @@ export class GameState {
   public matchType: MatchType;
   public playerMark: MarkType;
   public playerTurn: boolean;
+  public playerColor: string;
   public board: MarkType[][];
+  public colors: string[][];
   public result: MatchResult;
   public winningTriples: MarkTriple[];
 
@@ -15,10 +17,16 @@ export class GameState {
     this.matchType = MatchType.Bot;
     this.playerMark = MarkType.O;
     this.playerTurn = true;
+    this.playerColor = '';
     this.board = [
       [MarkType.Blank, MarkType.Blank, MarkType.Blank],
       [MarkType.Blank, MarkType.Blank, MarkType.Blank],
       [MarkType.Blank, MarkType.Blank, MarkType.Blank],
+    ];
+    this.colors = [
+      ['', '', ''],
+      ['', '', ''],
+      ['', '', ''],
     ];
     this.result = MatchResult.None;
     this.winningTriples = [];
