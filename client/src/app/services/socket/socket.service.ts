@@ -27,7 +27,7 @@ export class SocketService {
 
   public send(body: any = {}) {
     if (this.socket) {
-      this.socket.next({ message: 'tryMakeMove', ...body });
+      this.socket.next({ message: 'sendMessage', ...body });
     }
   }
 

@@ -31,7 +31,7 @@ export class SocketController {
       case 'getDataOnConnect':
         await this.socketService.getDataOnConnect(event.requestContext.connectionId);
         break;
-      case 'tryMakeMove':
+      case 'sendMessage':
         const body = JSON.parse(event.body);
         console.log('body', body);
         const x = body.x ?? 0;
