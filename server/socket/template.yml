@@ -69,15 +69,6 @@ Resources:
       AuthorizationType: NONE
       Target: !Join ["/", ["integrations", !Ref LambdaIntegration]]
 
-  OnPingRoute:
-    Type: AWS::ApiGatewayV2::Route
-    DependsOn: LambdaIntegration
-    Properties:
-      ApiId: !Ref WebsocketApi
-      RouteKey: ping
-      AuthorizationType: NONE
-      Target: !Join ["/", ["integrations", !Ref LambdaIntegration]]
-
   GetDataOnConnectRoute:
     Type: AWS::ApiGatewayV2::Route
     DependsOn: LambdaIntegration
@@ -126,7 +117,6 @@ Resources:
       - ConnectRoute
       - SendMessageRoute
       - GetDataOnConnectRoute
-      - OnPingRoute
       - DisconnectRoute
       - LambdaIntegration
     Type: AWS::ApiGatewayV2::Deployment

@@ -6,7 +6,7 @@ export class SocketBase {
   constructor() {
     this.socketApi = new AWS.ApiGatewayManagementApi({
       apiVersion: '2018-11-29',
-      endpoint: 'c711i0rit4.execute-api.us-east-1.amazonaws.com/Stage',
+      endpoint: '0osjbftlo4.execute-api.us-east-1.amazonaws.com/Stage',
     });
   }
 
