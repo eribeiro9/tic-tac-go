@@ -1,6 +1,22 @@
+@import './variables';
+
 .container {
   display: flex;
   font-size: 1.5rem;
+}
+
+.bar {
+  @extend .container;
+  padding: 0.5rem 0;
+  width: 100%;
+
+  &:empty {
+    padding: 0;
+  }
+
+  &.shadow {
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  }
 }
 
 .grid {
@@ -20,4 +36,16 @@
 
 .row {
   flex-direction: row;
+}
+
+.space-between {
+  justify-content: space-between;
+}
+
+.space-evenly {
+  justify-content: space-evenly;
+}
+
+.grow {
+  flex-grow: 1;
 }

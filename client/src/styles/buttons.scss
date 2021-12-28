@@ -6,26 +6,3 @@
   border-radius: 10px;
   padding: 2rem 3rem;
 }
-
-.fixed-buttons {
-  @extend .center, .container;
-  position: fixed;
-  animation: slide-up 0.5s ease-out;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  height: 2.75rem;
-  background-color: $color__primary;
-  cursor: pointer;
-  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-
-  &>div {
-    flex-grow: 1;
-    text-align: center;
-  }
-}
-
-@keyframes slide-up {
-  from {bottom: -2.75rem;}
-  to {bottom: 0;}
-}

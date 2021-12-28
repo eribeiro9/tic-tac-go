@@ -1,8 +1,8 @@
 {
   "name": "Tic Tac on the Go!",
   "short_name": "TicTacGo!",
-  "theme_color": "#80cbc4",
-  "background_color": "#aaaaaa",
+  "theme_color": "#64ffda",
+  "background_color": "#bdbdbd",
   "display": "standalone",
   "scope": "./",
   "start_url": "./",

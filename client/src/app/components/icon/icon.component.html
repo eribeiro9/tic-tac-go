@@ -1,21 +1,49 @@
-<svg version="1.1" id="L9" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-  viewBox="0 0 100 100" enable-background="new 0 0 0 0" xml:space="preserve">
-  <style>
-    .line {
-      fill: none;
-      stroke-width: 5;
-      stroke-linecap: butt;
-      stroke-linejoin: miter;
-      stroke-opacity: 1;
-      stroke-miterlimit: 4;
-      stroke-dasharray: none;
-    }
-  </style>
+<div class="center container">
+  <svg
+    version="1.1"
+    id="L9"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    x="0px"
+    y="0px"
+    viewBox="0 0 100 100"
+    enable-background="new 0 0 0 0"
+    xml:space="preserve"
+  >
+    <style>
+      .line {
+        fill: none;
+        stroke-linecap: butt;
+        stroke-linejoin: miter;
+        stroke-opacity: 1;
+        stroke-miterlimit: 4;
+        stroke-dasharray: none;
+      }
+    </style>
 
-  <circle *ngIf="icon === MarkType.O" cx="50" cy="50" r="48" class="line" [style.stroke]="color" />
+    <circle
+      *ngIf="icon === MarkType.O"
+      cx="50"
+      cy="50"
+      r="48"
+      class="line"
+      [style.stroke]="color"
+      [style.strokeWidth]="strokeWidth"
+    />
 
-  <ng-container *ngIf="icon === MarkType.X">
-    <path d="M0,0L100,100" class="line" [style.stroke]="color"></path>
-    <path d="M0,100L100,0" class="line" [style.stroke]="color"></path>
-  </ng-container>
-</svg>
+    <ng-container *ngIf="icon === MarkType.X">
+      <path
+        d="M0,0L100,100"
+        class="line"
+        [style.stroke]="color"
+        [style.strokeWidth]="strokeWidth"
+      ></path>
+      <path
+        d="M0,100L100,0"
+        class="line"
+        [style.stroke]="color"
+        [style.strokeWidth]="strokeWidth"
+      ></path>
+    </ng-container>
+  </svg>
+</div>

@@ -1,10 +1,23 @@
-.game {
-  padding-bottom: 3rem;
-  cursor: pointer;
+@import '../../../styles/variables';
+
+.mark-bg {
+  background-color: $color__bground;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
 }
 
 .mark {
-  padding: 2rem 0;
+  width: 1rem;
+}
+
+.container {
+  position: relative;
+}
+
+.game {
+  padding-bottom: 3rem;
+  cursor: pointer;
 }
 
 $board-size: 256px;

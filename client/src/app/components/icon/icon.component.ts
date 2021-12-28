@@ -11,6 +11,7 @@ export class IconComponent {
 
   @Input() icon: MarkType = MarkType.Blank;
   @Input() color: string = '';
+  @Input() strokeWidth: number = 5;
 
   MarkType = MarkType;
 

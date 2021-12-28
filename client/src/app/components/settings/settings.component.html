@@ -1,6 +1,13 @@
 <div class="center column container">
-  <a class="top-right clickable" [routerLink]="['/']">
-    <img src="assets/svg/home.svg" alt="Settings icon" class="icon">
+  <a
+    class="top-right clickable"
+    [routerLink]="['/']"
+  >
+    <img
+      src="assets/svg/home.svg"
+      alt="Settings icon"
+      class="icon"
+    >
   </a>
 
   <div class="setting">
@@ -8,7 +15,7 @@
     <p>WHAT is your favorite color?</p>
     <div class="center row grid">
       <ng-container *ngTemplateOutlet="colorSquare; context: { color: '#000000' }"></ng-container>
-      <ng-container *ngTemplateOutlet="colorSquare; context: { color: '#80cbc4' }"></ng-container>
+      <ng-container *ngTemplateOutlet="colorSquare; context: { color: '#64ffda' }"></ng-container>
       <ng-container *ngTemplateOutlet="colorSquare; context: { color: '#1565c0' }"></ng-container>
       <ng-container *ngTemplateOutlet="colorSquare; context: { color: '#4caf50' }"></ng-container>
       <ng-container *ngTemplateOutlet="colorSquare; context: { color: '#d32f2f' }"></ng-container>
@@ -20,7 +27,14 @@
   </div>
 </div>
 
-<ng-template #colorSquare let-color="color">
-  <div class="color clickable" [class.selected]="playerColor === color" [style.background-color]="color"
-    (click)="changeColor(color)"></div>
+<ng-template
+  #colorSquare
+  let-color="color"
+>
+  <div
+    class="color clickable"
+    [class.selected]="playerColor === color"
+    [style.background-color]="color"
+    (click)="changeColor(color)"
+  ></div>
 </ng-template>

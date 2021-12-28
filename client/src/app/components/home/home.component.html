@@ -1,17 +1,32 @@
 <div class="full home center container">
-  <a class="top-right clickable" [routerLink]="['/settings']">
-    <img src="assets/svg/gear.svg" alt="Settings icon" class="icon">
+  <a
+    class="top-right clickable"
+    [routerLink]="['/settings']"
+  >
+    <img
+      src="assets/svg/gear.svg"
+      alt="Settings icon"
+      class="icon"
+    >
   </a>
 
   <div class="title center column container">
-    <img src="assets/svg/logo.svg" alt="Tic Tac Go logo" class="logo">
+    <img
+      src="assets/svg/logo.svg"
+      alt="Tic Tac Go logo"
+      class="logo"
+    >
   </div>
 
   <div class="center column container">
     <div class="quarter center container">
       <div>
         <ng-container *ngIf="(isConnected | async) else notConnected">
-          <a class="button" [routerLink]="['/lobby']" [queryParams]="{match: MatchType.Human}">Online Game</a>
+          <a
+            class="button"
+            [routerLink]="['/lobby']"
+            [queryParams]="{match: MatchType.Human}"
+          >Online Game</a>
         </ng-container>
 
         <ng-template #notConnected>
@@ -25,7 +40,11 @@
 
     <div class="quarter center container">
       <div>
-        <a class="button" [routerLink]="['/lobby']" [queryParams]="{match: MatchType.Bot}">Solo Game</a>
+        <a
+          class="button"
+          [routerLink]="['/lobby']"
+          [queryParams]="{match: MatchType.Bot}"
+        >Solo Game</a>
       </div>
     </div>
   </div>

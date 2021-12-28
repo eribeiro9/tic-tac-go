@@ -1,11 +1,21 @@
-<div class="full center column container with-buttons">
-  <div>{{ (vsHuman | async) ? 'Finding' : 'Preparing' }}</div>
-  <div class="loader">
-    <img src="assets/svg/loader.svg" alt="Tic Tac Go loader" class="logo">
-  </div>
-  <div>Match</div>
-</div>
+<div class="full center column container">
+  <a
+    class="top-right clickable"
+    (click)="back()"
+  >
+    <img
+      src="assets/svg/home.svg"
+      alt="Home icon"
+      class="icon"
+    >
+  </a>
 
-<div class="fixed-buttons">
-  <div (click)="back()">Back</div>
+  <div class="loader">
+    <img
+      src="assets/svg/loader.svg"
+      alt="Tic Tac Go loader"
+      class="logo"
+    >
+  </div>
+  <div class="primary pill">{{ (vsHuman | async) ? 'Finding' : 'Preparing' }} Match</div>
 </div>

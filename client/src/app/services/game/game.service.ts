@@ -98,10 +98,7 @@ export class GameService {
       this.subscriptions = [];
     }
 
-    const state = this.gameState.value;
-    if (state.matchType === MatchType.Human) {
-      this.socketService.disconnect();
-    }
+    this.socketService.disconnect();
   }
 
   private botTurn(state: GameState) {

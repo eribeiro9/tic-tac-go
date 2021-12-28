@@ -26,6 +26,23 @@
   cursor: not-allowed;
 }
 
+.primary {
+  background-color: $color__primary;
+
+  &.dark {
+    background-color: $color__primary_dark;
+  }
+}
+
+.secondary {
+  background-color: $color__secondary;
+}
+
+.pill {
+  border-radius: 3rem;
+  padding: 0.5rem 2rem;
+}
+
 .logo {
   width: 200px;
   height: 200px;
