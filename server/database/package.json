@@ -1,5 +1,0 @@
-{
-  "scripts": {
-    "deploy": "aws cloudformation deploy --template-file template.yml --stack-name ttg-table --capabilities CAPABILITY_IAM"
-  }
-}

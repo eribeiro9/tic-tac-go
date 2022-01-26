@@ -1,0 +1,106 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  EnvName:
+    Description: Environment name
+    Type: String
+  Url:
+    Description: Website URL
+    Type: String
+  CNAMEs:
+    Description: The CloudFront list of CNAMEs
+    Type: CommaDelimitedList
+  CertArn:
+    Description: SSH Certificate ARN
+    Type: String
+  HostedZoneId:
+    Description: Hosted Zone Id
+    Type: String
+
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref Url
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: index.html
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  S3BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref S3Bucket
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - 's3:GetObject'
+            Effect: Allow
+            Resource: !Join
+              - ''
+              - - 'arn:aws:s3:::'
+                - !Ref S3Bucket
+                - /*
+            Principal:
+              AWS: !Sub arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ${OriginAccessId}
+
+  OriginAccessId:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: !Sub tictacgo-${EnvName}
+
+  CloudFrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        DefaultRootObject: index.html
+        IPV6Enabled: true
+        HttpVersion: http2
+        Aliases: !Ref CNAMEs
+        ViewerCertificate:
+          AcmCertificateArn: !Ref CertArn
+          MinimumProtocolVersion: TLSv1.2_2021
+          SslSupportMethod: sni-only
+        Origins:
+          - Id: !Sub S3-${Url}
+            DomainName: !Sub ${Url}.s3.amazonaws.com
+            S3OriginConfig:
+              OriginAccessIdentity: !Sub origin-access-identity/cloudfront/${OriginAccessId}
+        DefaultCacheBehavior:
+          AllowedMethods:
+            - GET
+            - HEAD
+          TargetOriginId: !Sub S3-${Url}
+          ViewerProtocolPolicy: redirect-to-https
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
+        CustomErrorResponses:
+          - ErrorCode: 403
+            ErrorCachingMinTTL: 10
+            ResponsePagePath: /index.html
+            ResponseCode: 200
+
+  Route53Record:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      Name: !Ref Url
+      Type: A
+      HostedZoneId: !Ref HostedZoneId
+      AliasTarget:
+        DNSName: !GetAtt CloudFrontDistribution.DomainName
+        EvaluateTargetHealth: false
+        HostedZoneId: Z2FDTNDATAQYW2
+
+Outputs:
+  CloudFrontDistributionID:
+    Description: TicTacGo CloudFront ID
+    Value: !Ref CloudFrontDistribution
+  S3BucketUrl:
+    Description: TicTacGo S3 Bucket URL
+    Value: !Sub s3://${Url}

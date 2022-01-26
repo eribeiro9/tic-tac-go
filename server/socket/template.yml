@@ -2,14 +2,28 @@ AWSTemplateFormatVersion: 2010-09-09
 Transform:
 - AWS::Serverless-2016-10-31
 
+Parameters:
+  EnvName:
+    Description: Environment name
+    Type: String
+  DomainName:
+    Description: Domain for API Gateway API's
+    Type: String
+  CertArn:
+    Description: SSH Certificate ARN
+    Type: String
+  HostedZoneId:
+    Description: Hosted Zone Id
+    Type: String
+
 Resources:
   WebSocketsService:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: ./dist
       Handler: lambda.handler
-      FunctionName: tictacgo
-      Description: handler for all things web sockets
+      FunctionName: !Sub tictacgo-${EnvName}
+      Description: TicTacGo WebSocket API - ${EnvName}
       Runtime: nodejs14.x
       Timeout: 30
       MemorySize: 512
@@ -47,7 +61,7 @@ Resources:
     DependsOn: WebSocketsService
     Type: AWS::ApiGatewayV2::Api
     Properties:
-      Name: tictacgo
+      Name: !Sub tictacgo-${EnvName}
       ProtocolType: WEBSOCKET
       RouteSelectionExpression: $request.body.message
 
@@ -113,3 +127,31 @@ Resources:
     Properties:
       ApiId: !Ref WebsocketApi
       Description: CloudFormation deployment
+      
+  CustomDomainName:
+    Type: AWS::ApiGatewayV2::DomainName
+    Properties: 
+      DomainName: !Ref DomainName
+      DomainNameConfigurations:
+        - EndpointType: REGIONAL
+          CertificateArn: !Ref CertArn
+          SecurityPolicy: TLS_1_2
+
+  CustomDomainRoute:
+    Type: AWS::ApiGatewayV2::ApiMapping
+    Properties: 
+      ApiId: !Ref WebsocketApi
+      ApiMappingKey: v1
+      DomainName: !Ref DomainName
+      Stage: !Ref WebSocketsStage
+
+  Route53RecordSetGroup:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      Name: !Ref DomainName
+      Type: A
+      HostedZoneId: !Ref HostedZoneId
+      AliasTarget:
+        DNSName: !GetAtt CustomDomainName.RegionalDomainName
+        EvaluateTargetHealth: false
+        HostedZoneId: !GetAtt CustomDomainName.RegionalHostedZoneId

@@ -3,11 +3,7 @@
     "lint": "eslint . --ext .ts",
     "prebuild": "npm install && npm run lint",
     "build": "rm -rf dist && tsc",
-    "prepare-dist": "cp package.json ./dist && cd ./dist && npm i --only prod && cd ..",
-    "predeploy": "npm run build && npm run prepare-dist",
-    "deploy": "npm run aws-package && npm run aws-deploy && rm -rf template-export.yml",
-    "aws-package": "aws cloudformation package --template template.yml --s3-bucket deployments.tictacgo.xyz --s3-prefix socket --output-template template-export.yml",
-    "aws-deploy": "aws cloudformation deploy --template-file template-export.yml --stack-name ttg-socket --capabilities CAPABILITY_NAMED_IAM"
+    "prepare-dist": "cp package.json ./dist && cd ./dist && npm i --only prod && cd .."
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.76",
