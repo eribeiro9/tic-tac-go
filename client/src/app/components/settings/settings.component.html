@@ -12,7 +12,6 @@
 
   <div class="setting">
     <h3>Player Color</h3>
-    <p>WHAT is your favorite color?</p>
     <div class="center row grid">
       <ng-container *ngTemplateOutlet="colorSquare; context: { color: '#000000' }"></ng-container>
       <ng-container *ngTemplateOutlet="colorSquare; context: { color: '#64ffda' }"></ng-container>
@@ -23,6 +22,21 @@
       <ng-container *ngTemplateOutlet="colorSquare; context: { color: '#ff9800' }"></ng-container>
       <ng-container *ngTemplateOutlet="colorSquare; context: { color: '#f06292' }"></ng-container>
       <ng-container *ngTemplateOutlet="colorSquare; context: { color: '#795548' }"></ng-container>
+    </div>
+  </div>
+
+  <div class="setting">
+    <h3>Solo Difficulty</h3>
+    <div class="center row grid">
+      <ng-container
+        *ngTemplateOutlet="difficultyLevel; context: { level: Difficulty.Easy, title: 'Easy', subtitle: 'Makes Mistakes' }"
+      ></ng-container>
+      <ng-container
+        *ngTemplateOutlet="difficultyLevel; context: { level: Difficulty.Normal, title: 'Normal', subtitle: 'Some Mistakes' }"
+      ></ng-container>
+      <ng-container
+        *ngTemplateOutlet="difficultyLevel; context: { level: Difficulty.Hard, title: 'Hard', subtitle: 'No Mistakes' }"
+      ></ng-container>
     </div>
   </div>
 </div>
@@ -37,4 +51,20 @@
     [style.background-color]="color"
     (click)="changeColor(color)"
   ></div>
+</ng-template>
+
+<ng-template
+  #difficultyLevel
+  let-level="level"
+  let-title="title"
+  let-subtitle="subtitle"
+>
+  <div
+    class="level clickable"
+    [class.selected]="difficulty === level"
+    (click)="changeDifficulty(level)"
+  >
+    <div>{{ title }}</div>
+    <div>{{ subtitle }}</div>
+  </div>
 </ng-template>

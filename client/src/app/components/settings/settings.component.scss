@@ -15,8 +15,14 @@
   height: 2rem;
   margin: 1rem 2rem;
   border-radius: 5px;
+}
 
-  &.selected {
-    box-shadow: 0 0 0 5px white;
-  }
+.level {
+  margin: 1rem 2rem;
+  border-radius: 5px;
+  padding: 1rem 2rem;
+}
+
+.selected {
+  box-shadow: 0 0 0 5px white;
 }

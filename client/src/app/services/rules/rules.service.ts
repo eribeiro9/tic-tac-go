@@ -1,3 +1,4 @@
+import { Difficulty } from '../../enums/difficulty.enum';
 import { MarkTriple } from '../../enums/mark-triple.enum';
 import { MarkType } from '../../enums/mark-type.enum';
 import { MatchResult } from '../../enums/match-result.enum';
@@ -37,26 +38,30 @@ export class RulesService {
     return state.result === MatchResult.None && state.playerTurn && state.board[y][x] === MarkType.Blank;
   }
 
-  public static botMove(board: MarkType[][], botMark: MarkType): { x: number, y: number } {
-    // Get all triples with atleast one blank
-    const triples = RulesService.getTriples(board).filter(t => t.value.includes(MarkType.Blank));
+  public static botMove(board: MarkType[][], botMark: MarkType, difficulty: Difficulty): { x: number, y: number } {
+    if (difficulty === Difficulty.Normal || difficulty === Difficulty.Hard) {
+      // Get all triples with atleast one blank
+      const triples = RulesService.getTriples(board).filter(t => t.value.includes(MarkType.Blank));
 
-    // Get any doubles that can win the game
-    const botDoubles = triples.filter(t => t.value.filter(x => x === botMark).length === 2);
-    if (botDoubles && botDoubles.length > 0) {
-      return botDoubles[0].positions[botDoubles[0].value.indexOf(MarkType.Blank)];
-    }
+      // Get any doubles that can win the game
+      const botDoubles = triples.filter(t => t.value.filter(x => x === botMark).length === 2);
+      if (botDoubles && botDoubles.length > 0) {
+        return botDoubles[0].positions[botDoubles[0].value.indexOf(MarkType.Blank)];
+      }
 
-    // Get any player doubles that can prevent losing
-    const playerDoubles = triples.filter(t => t.value.filter(x => x === RulesService.oppositeMark(botMark)).length === 2);
-    if (playerDoubles && playerDoubles.length > 0) {
-      return playerDoubles[0].positions[playerDoubles[0].value.indexOf(MarkType.Blank)];
-    }
+      if (difficulty === Difficulty.Hard) {
+        // Get any player doubles that can prevent losing
+        const playerDoubles = triples.filter(t => t.value.filter(x => x === RulesService.oppositeMark(botMark)).length === 2);
+        if (playerDoubles && playerDoubles.length > 0) {
+          return playerDoubles[0].positions[playerDoubles[0].value.indexOf(MarkType.Blank)];
+        }
 
-    // Get any singles that can become doubles
-    const botSingles = triples.filter(t => t.value.filter(x => x === botMark).length === 1 && t.value.filter(x => x === MarkType.Blank).length === 2);
-    if (botSingles && botSingles.length > 0) {
-      return botSingles[0].positions[botSingles[0].value.indexOf(MarkType.Blank)];
+        // Get any singles that can become doubles
+        const botSingles = triples.filter(t => t.value.filter(x => x === botMark).length === 1 && t.value.filter(x => x === MarkType.Blank).length === 2);
+        if (botSingles && botSingles.length > 0) {
+          return botSingles[0].positions[botSingles[0].value.indexOf(MarkType.Blank)];
+        }
+      }
     }
 
     // Otherwise, place a random mark

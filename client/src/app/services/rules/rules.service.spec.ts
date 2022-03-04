@@ -1,3 +1,4 @@
+import { Difficulty } from 'src/app/enums/difficulty.enum';
 import { MarkType } from '../../enums/mark-type.enum';
 import { RulesService } from './rules.service';
 
@@ -24,7 +25,7 @@ describe('RulesService', () => {
         [MarkType.X, MarkType.X, MarkType.Blank],
         [MarkType.Blank, MarkType.Blank, MarkType.Blank],
       ];
-      expect(RulesService.botMove(board, MarkType.O)).toEqual({ x: 2, y: 0 });
+      expect(RulesService.botMove(board, MarkType.O, Difficulty.Hard)).toEqual({ x: 2, y: 0 });
     });
 
     it('should prevent player doubles', () => {
@@ -33,7 +34,7 @@ describe('RulesService', () => {
         [MarkType.X, MarkType.X, MarkType.Blank],
         [MarkType.O, MarkType.Blank, MarkType.Blank],
       ];
-      expect(RulesService.botMove(board, MarkType.O)).toEqual({ x: 2, y: 1 });
+      expect(RulesService.botMove(board, MarkType.O, Difficulty.Hard)).toEqual({ x: 2, y: 1 });
     });
 
     it('should create doubles', () => {
@@ -42,7 +43,7 @@ describe('RulesService', () => {
         [MarkType.X, MarkType.Blank, MarkType.Blank],
         [MarkType.Blank, MarkType.Blank, MarkType.Blank],
       ];
-      expect(RulesService.botMove(board, MarkType.O)).toEqual({ x: 1, y: 0 });
+      expect(RulesService.botMove(board, MarkType.O, Difficulty.Hard)).toEqual({ x: 1, y: 0 });
     });
 
     it('should avoid being blocked', () => {
@@ -51,7 +52,7 @@ describe('RulesService', () => {
         [MarkType.X, MarkType.Blank, MarkType.Blank],
         [MarkType.Blank, MarkType.Blank, MarkType.Blank],
       ];
-      expect(RulesService.botMove(board, MarkType.O)).not.toEqual({ x: 1, y: 0 });
+      expect(RulesService.botMove(board, MarkType.O, Difficulty.Hard)).not.toEqual({ x: 1, y: 0 });
     });
 
     it('should avoid being blocked', () => {
@@ -60,7 +61,7 @@ describe('RulesService', () => {
         [MarkType.X, MarkType.Blank, MarkType.Blank],
         [MarkType.Blank, MarkType.Blank, MarkType.Blank],
       ];
-      expect(RulesService.botMove(board, MarkType.O)).not.toEqual({ x: 0, y: 2 });
+      expect(RulesService.botMove(board, MarkType.O, Difficulty.Hard)).not.toEqual({ x: 0, y: 2 });
     });
   });
 

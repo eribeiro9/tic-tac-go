@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { BehaviorSubject, Subject, Subscription } from 'rxjs';
 import { delay, filter, take, tap } from 'rxjs/operators';
+import { Difficulty } from 'src/app/enums/difficulty.enum';
 import { MarkType } from '../../enums/mark-type.enum';
 import { MatchResult } from '../../enums/match-result.enum';
 import { MatchType } from '../../enums/match-type.enum';
@@ -102,8 +103,9 @@ export class GameService {
   }
 
   private botTurn(state: GameState) {
+    const difficulty: Difficulty = (localStorage.getItem('difficulty') || 'N') as Difficulty;
     const botMark = state.playerMark === MarkType.O ? MarkType.X : MarkType.O;
-    const botMove = RulesService.botMove(state.board, botMark);
+    const botMove = RulesService.botMove(state.board, botMark, difficulty);
     this.applyMove(state, botMove.x, botMove.y, botMark);
   }
 
