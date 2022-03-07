@@ -1,3 +1,4 @@
+import { RandomUtils } from 'src/app/utils/random.utils';
 import { Difficulty } from '../../enums/difficulty.enum';
 import { MarkTriple } from '../../enums/mark-triple.enum';
 import { MarkType } from '../../enums/mark-type.enum';
@@ -65,13 +66,12 @@ export class RulesService {
     }
 
     // Otherwise, place a random mark
-    for (let x = 0; x < 3; x++) {
-      for (let y = 0; y < 3; y++) {
-        if (board[y][x] === MarkType.Blank) {
-          return { x, y };
-        }
-      }
+    const blankSlots = RulesService.getBlankSlots(board);
+    if (blankSlots?.length > 0) {
+      return RandomUtils.ChooseFrom(...blankSlots);
     }
+
+    // Fallback
     return { x: 0, y: 0 };
   }
 
@@ -128,6 +128,20 @@ export class RulesService {
       return false;
     }
     return threeSlots.every(s => s === threeSlots[0]);
+  }
+
+  public static getBlankSlots(board: MarkType[][]): { x: number, y: number }[] {
+    const blankSlots: { x: number, y: number }[] = [];
+
+    for (let x = 0; x < 3; x++) {
+      for (let y = 0; y < 3; y++) {
+        if (board[y][x] === MarkType.Blank) {
+          blankSlots.push({ x, y });
+        }
+      }
+    }
+
+    return blankSlots;
   }
 
 }
