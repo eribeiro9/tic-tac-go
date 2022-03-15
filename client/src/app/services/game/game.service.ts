@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { BehaviorSubject, Subject, Subscription } from 'rxjs';
-import { delay, filter, take, tap } from 'rxjs/operators';
-import { Difficulty } from 'src/app/enums/difficulty.enum';
+import { delay, filter, tap } from 'rxjs/operators';
+import { Difficulty } from '../../enums/difficulty.enum';
 import { MarkType } from '../../enums/mark-type.enum';
 import { MatchResult } from '../../enums/match-result.enum';
 import { MatchType } from '../../enums/match-type.enum';
@@ -23,6 +23,7 @@ export class GameService {
 
   public gameState = new BehaviorSubject<GameState>(new GameState());
   public onStart = new Subject<void>();
+  public gameCode = new Subject<string>();
 
   constructor(
     private readonly socketService: SocketService,
@@ -58,21 +59,44 @@ export class GameService {
     ).subscribe(state => this.botTurn(state)));
   }
 
-  public setupHumanGame() {
+  public setupPublicGame() {
+    this.setupOnlineGame();
+    this.socketService.send('random');
+  }
+
+  public setupPrivateGame() {
+    this.setupOnlineGame();
+    this.socketService.send('host');
+    return this.gameCode;
+  }
+
+  public joinPrivateGame(gameCode: string) {
+    this.setupOnlineGame();
+    this.socketService.send('join', { gameCode });
+  }
+
+  private setupOnlineGame() {
     this.subscriptions.push(this.socketService.onMessage.pipe(
       tap(message => {
-        this.gameState.next({
-          matchType: MatchType.Human,
-          ...message,
-        });
+        switch (message.type) {
+          case 'start':
+            this.onStart.next();
+            break;
+          case 'host':
+            this.gameCode.next(message.gameCode);
+            break;
+          case 'play':
+            this.gameState.next({
+              matchType: MatchType.Human,
+              ...message,
+            });
+            break;
+        }
       }),
     ).subscribe());
 
     const settings = this.getPlayerSettings();
-    this.subscriptions.push(this.socketService.connect(settings).pipe(
-      take(1),
-      tap(() => this.onStart.next()),
-    ).subscribe());
+    this.subscriptions.push(this.socketService.connect(settings).subscribe());
   }
 
   private getPlayerSettings() {
@@ -88,7 +112,7 @@ export class GameService {
       if (state.matchType === MatchType.Bot) {
         this.applyMove(this.gameState.value, x, y, this.gameState.value.playerMark);
       } else {
-        this.socketService.send({ x, y });
+        this.socketService.send('play', { x, y });
       }
     }
   }

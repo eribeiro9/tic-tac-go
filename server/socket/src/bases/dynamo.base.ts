@@ -27,6 +27,16 @@ export class DynamoBase {
     }
   }
 
+  protected async getItem(condition: string, values: any): Promise<any> {
+    try {
+      const results = await this.getItems(condition, values);
+      return results?.length > 0 ? results[0] : null;
+    } catch (ex) {
+      console.error(ex);
+      throw ex;
+    }
+  }
+
   protected putItem(item: {
     [key: string]: any;
   }) {
@@ -49,18 +59,12 @@ export class DynamoBase {
     [key: string]: any;
   }) {
     try {
-      for (const key in values) {
-        if (typeof values[key] === 'object') {
-          values[key] = { 'M': marshall(values[key]) };
-        }
-      }
-
       return this.table.updateItem({
         TableName: this.tableName,
         Key: marshall(key),
         UpdateExpression: expression,
         ExpressionAttributeNames: names,
-        ExpressionAttributeValues: values,
+        ExpressionAttributeValues: marshall(values),
       }).promise();
     } catch (ex) {
       console.error(ex);

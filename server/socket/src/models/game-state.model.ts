@@ -45,6 +45,7 @@ export class GameState {
     }
 
     return {
+      type: 'play',
       board: state.board,
       colors: state.colors,
       playerMark,

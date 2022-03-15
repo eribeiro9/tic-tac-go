@@ -1,4 +1,4 @@
-<div class="full home center container">
+<div class="full center column container">
   <a
     class="top-right clickable"
     [routerLink]="['/settings']"
@@ -10,42 +10,75 @@
     >
   </a>
 
-  <div class="title center column container">
-    <img
-      src="assets/svg/logo.svg"
-      alt="Tic Tac Go logo"
-      class="logo"
-    >
-  </div>
-
-  <div class="center column container">
-    <div class="quarter center container">
-      <div>
-        <ng-container *ngIf="(isConnected | async) else notConnected">
-          <a
-            class="button"
-            [routerLink]="['/lobby']"
-            [queryParams]="{match: MatchType.Human}"
-          >Online Game</a>
-        </ng-container>
-
-        <ng-template #notConnected>
-          <div class="button center column container">
-            <span class="strikethrough">Online Game</span>
-            <small>OFFLINE</small>
-          </div>
-        </ng-template>
-      </div>
+  <div class="w-100 center container space-evenly grow">
+    <div class="desktop-title center column container grow">
+      <img
+        src="assets/svg/logo.svg"
+        alt="Tic Tac Go logo"
+        class="logo"
+      >
     </div>
 
-    <div class="quarter center container">
-      <div>
-        <a
-          class="button"
-          [routerLink]="['/lobby']"
-          [queryParams]="{match: MatchType.Bot}"
-        >Solo Game</a>
+    <div class="h-100 center column container space-evenly grow">
+      <div class="mobile-title center column container">
+        <img
+          src="assets/svg/logo.svg"
+          alt="Tic Tac Go logo"
+          class="logo"
+        >
+      </div>
+
+      <div class="center container grow">
+        <ng-container *ngTemplateOutlet="button; context: {
+          enabled: (isConnected | async),
+          route: '/lobby',
+          queryParams: { match: MatchType.Human },
+          text: 'Quick Play',
+          disabledText: 'OFFLINE'
+        }"></ng-container>
+      </div>
+
+      <div class="center container grow">
+        <ng-container *ngTemplateOutlet="button; context: {
+          enabled: (isConnected | async),
+          route: '/join',
+          text: 'Play with Friend',
+          disabledText: 'OFFLINE'
+        }"></ng-container>
+      </div>
+
+      <div class="center container grow">
+        <ng-container *ngTemplateOutlet="button; context: {
+          enabled: true,
+          route: '/lobby',
+          queryParams: { match: MatchType.Bot },
+          text: 'Offline Game'
+        }"></ng-container>
       </div>
     </div>
   </div>
 </div>
+
+<ng-template
+  #button
+  let-enabled="enabled"
+  let-route="route"
+  let-queryParams="queryParams"
+  let-text="text"
+  let-disabledText="disabledText"
+>
+  <ng-container *ngIf="enabled else disabled">
+    <a
+      class="button"
+      [routerLink]="[route]"
+      [queryParams]="queryParams"
+    >{{ text }}</a>
+  </ng-container>
+
+  <ng-template #disabled>
+    <div class="button center column container">
+      <span class="strikethrough">{{ text }}</span>
+      <small>{{ disabledText }}</small>
+    </div>
+  </ng-template>
+</ng-template>

@@ -13,11 +13,10 @@ export class GameRepository extends DynamoBase {
 
   public async get(gameId: string): Promise<Game | null> {
     try {
-      const results = await this.getItems('pk = :pk AND sk = :sk', {
+      return await this.getItem('pk = :pk AND sk = :sk', {
         ':pk': TableType.Game,
         ':sk': gameId,
       });
-      return results && results.length > 0 ? results[0] : null;
     } catch (ex) {
       console.error(ex);
       throw ex;

@@ -21,13 +21,13 @@ export class SocketService {
     this.socket.pipe(
       tap(message => this.onMessage.next(message)),
     ).subscribe();
-    this.socket.next({ message: 'getDataOnConnect', ...settings });
+    this.socket.next({ message: 'sendMessage', type: 'settings', ...settings });
     return this.onMessage;
   }
 
-  public send(body: any = {}) {
+  public send(type: string, body: any = {}) {
     if (this.socket) {
-      this.socket.next({ message: 'sendMessage', ...body });
+      this.socket.next({ message: 'sendMessage', type, ...body });
     }
   }
 

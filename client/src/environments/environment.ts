@@ -5,6 +5,7 @@
 export const environment = {
   production: false,
   websocketURL: 'wss://wss.tictacgo.xyz/v1',
+  baseUrl: 'https://www.tictacgo.xyz',
 };
 
 /*

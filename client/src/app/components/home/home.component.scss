@@ -2,13 +2,18 @@
 @import '../../../styles/mixins';
 @import '../../../styles/variables';
 
-.home {
-  @extend .column;
+.mobile-title {
+  padding: 3rem 0;
 
   @include media-breakpoint-up(sm) {
-    flex-direction: row !important;
-    &>* {
-      flex-grow: 1;
-    }
+    display: none;
+  }
+}
+
+.desktop-title {
+  display: none;
+
+  @include media-breakpoint-up(sm) {
+    display: inherit;
   }
 }

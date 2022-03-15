@@ -1,0 +1,69 @@
+<div class="main full center container">
+  <a
+    class="top-right clickable"
+    (click)="back()"
+  >
+    <img
+      src="assets/svg/home.svg"
+      alt="Home icon"
+      class="icon"
+    >
+  </a>
+
+  <div class="host center column container space-evenly">
+    <div>Host Game</div>
+    <ng-container *ngIf="(gameCode | async) else loading">
+      <ng-container *ngTemplateOutlet="host; context: {
+        gameCode: (gameCode | async),
+        joinUrl: (joinUrl | async),
+        qrUrl: (qrUrl | async)
+      }"></ng-container>
+    </ng-container>
+  </div>
+
+  <div class="join center column container">
+    <ng-container *ngTemplateOutlet="join"></ng-container>
+  </div>
+</div>
+
+<ng-template
+  #host
+  let-gameCode="gameCode"
+  let-joinUrl="joinUrl"
+  let-qrUrl="qrUrl"
+>
+  <div class="primary pill">{{ gameCode }}</div>
+  <div class="url center container">
+    {{ joinUrl }}
+    <img
+      src="assets/svg/copy.svg"
+      alt="Copy icon"
+      class="clickable icon"
+      (click)="copy(joinUrl)"
+    >
+  </div>
+  <img src="{{ qrUrl }}">
+</ng-template>
+
+<ng-template #join>
+  <div>Join Game</div>
+  <input
+    type="text"
+    class="text"
+    maxlength="4"
+    placeholder="Enter Code"
+    [ngModel]="code"
+    (ngModelChange)="type($event)"
+  >
+</ng-template>
+
+<ng-template #loading>
+  <div class="loader">
+    <img
+      src="assets/svg/loader.svg"
+      alt="Tic Tac Go loader"
+      class="logo"
+    >
+  </div>
+  <div class="primary pill">Creating Code</div>
+</ng-template>

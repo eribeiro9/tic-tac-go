@@ -1,0 +1,31 @@
+@import '../../../styles/mixins';
+@import '../../../styles/variables';
+
+.main {
+  flex-direction: column;
+
+  @include media-breakpoint-up(md) {
+    flex-direction: row;
+  }
+}
+
+.host {
+  flex-grow: 3;
+
+  @include media-breakpoint-up(md) {
+    height: 100%;
+  }
+}
+
+.join {
+  flex-grow: 2;
+  gap: 1rem;
+}
+
+.url {
+  gap: 0.5rem;
+
+  .icon {
+    width: 1.5rem;
+  }
+}

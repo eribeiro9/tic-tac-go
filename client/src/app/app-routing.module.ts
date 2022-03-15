@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './components/home/home.component';
+import { JoinComponent } from './components/join/join.component';
 import { LobbyComponent } from './components/lobby/lobby.component';
 import { PlayComponent } from './components/play/play.component';
 import { SettingsComponent } from './components/settings/settings.component';
@@ -12,6 +13,9 @@ const routes: Routes = [{
 }, {
   path: 'lobby',
   component: LobbyComponent,
+}, {
+  path: 'join',
+  component: JoinComponent,
 }, {
   path: 'play',
   component: PlayComponent,

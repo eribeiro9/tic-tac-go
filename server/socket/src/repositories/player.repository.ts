@@ -11,24 +11,54 @@ export class PlayerRepository extends DynamoBase {
 
   public async get(connectionId: string) {
     try {
-      const results = await this.getItems('pk = :pk AND sk = :sk', {
+      return await this.getItem('pk = :pk AND sk = :sk', {
         ':pk': TableType.Player,
         ':sk': connectionId,
       });
-      return results && results.length > 0 ? results[0] : null;
     } catch (ex) {
       console.error(ex);
       throw ex;
     }
   }
 
-  public async create(connectionId: string, gameId = '') {
+  public async updateSettings(connectionId: string, playerColor: string): Promise<void> {
+    try {
+      await this.updateItem({
+        'pk': TableType.Player,
+        'sk': connectionId,
+      }, 'set #playerColor = :playerColor', {
+        '#playerColor': 'playerColor',
+      }, {
+        ':playerColor': playerColor,
+      });
+    } catch (ex) {
+      console.error(ex);
+      throw ex;
+    }
+  }
+
+  public async updateGameId(connectionId: string, gameId: string): Promise<void> {
+    try {
+      await this.updateItem({
+        'pk': TableType.Player,
+        'sk': connectionId,
+      }, 'set #gameId = :gameId', {
+        '#gameId': 'gameId',
+      }, {
+        ':gameId': gameId,
+      });
+    } catch (ex) {
+      console.error(ex);
+      throw ex;
+    }
+  }
+
+  public async create(connectionId: string): Promise<void> {
     try {
       await this.putItem({
         pk: TableType.Player,
         sk: connectionId,
         connectionId,
-        gameId,
         expires: new Date().getTime() + 30000,
       });
     } catch (ex) {
@@ -37,7 +67,7 @@ export class PlayerRepository extends DynamoBase {
     }
   }
 
-  public async delete(connectionId: string) {
+  public async delete(connectionId: string): Promise<void> {
     try {
       await this.deleteItem({
         pk: TableType.Player,

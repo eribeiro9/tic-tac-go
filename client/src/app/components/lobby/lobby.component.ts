@@ -46,7 +46,7 @@ export class LobbyComponent implements OnInit {
     ).subscribe(isHuman => {
       this.vsHuman.next(isHuman);
       if (isHuman) {
-        this.gameService.setupHumanGame();
+        this.gameService.setupPublicGame();
       } else {
         this.gameService.setupBotGame();
       }

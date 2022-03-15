@@ -16,8 +16,14 @@ export class AppComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.router.navigate(['']);
+    if (this.navigateHome(window.location.pathname)) {
+      this.router.navigate(['']);
+    }
     this.socketService.onDisconnect.subscribe(() => this.router.navigate(['']));
+  }
+
+  private navigateHome(url: string): boolean {
+    return !(url?.toLowerCase().includes('/join'));
   }
 
 }
