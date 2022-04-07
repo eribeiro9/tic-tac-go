@@ -7,10 +7,16 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+          
+      - name: Set environment variables
+        run: |
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set region us-east-1
 
       - name: Deploy the database
         run: |
@@ -25,4 +31,5 @@ jobs:
       - name: Deploy the website
         run: |
           cd $GITHUB_WORKSPACE/client
+          npm install -g @angular/cli
           npm run deploy
