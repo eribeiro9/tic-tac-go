@@ -20,6 +20,10 @@ export class AppComponent implements OnInit {
       this.router.navigate(['']);
     }
     this.socketService.onDisconnect.subscribe(() => this.router.navigate(['']));
+
+    if (!localStorage.getItem('playerColor')) {
+      localStorage.setItem('playerColor', '#000000')
+    }
   }
 
   private navigateHome(url: string): boolean {
