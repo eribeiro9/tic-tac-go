@@ -22,11 +22,12 @@ jobs:
           aws configure set region us-east-1
 
       - name: Deploy the database
-        working-directory: $GITHUB_WORKSPACE/server/database
+        working-directory: server/database
         run: aws cloudformation deploy --template-file template.yml --stack-name ttg-table-$ENV_NAME --capabilities CAPABILITY_IAM
 
   deploy-socket:
     runs-on: ubuntu-latest
+    needs: deploy-database
     steps:
       - uses: actions/checkout@v3
           
@@ -37,11 +38,11 @@ jobs:
           aws configure set region us-east-1
 
       - name: Build the socket service
-        working-directory: $GITHUB_WORKSPACE/server/socket
+        working-directory: server/socket
         run: npm run build
 
       - name: Deploy the socket service
-        working-directory: $GITHUB_WORKSPACE/server/socket
+        working-directory: server/socket
         run: |
           npm run prepare-dist
           aws cloudformation package --template template.yml --s3-bucket deployments.tictacgo.xyz --s3-prefix $ENV_NAME/socket --output-template template-export.yml
@@ -50,6 +51,7 @@ jobs:
 
   deploy-site:
     runs-on: ubuntu-latest
+    needs: deploy-socket
     steps:
       - uses: actions/checkout@v3
           
@@ -60,7 +62,7 @@ jobs:
           aws configure set region us-east-1
 
       - name: Deploy the website infrastructure
-        working-directory: $GITHUB_WORKSPACE/client
+        working-directory: client
         run: |
           PARAMS="EnvName=$ENV_NAME Url=$URL CNAMEs=$CNAMES CertArn=${{ secrets.AWS_SSH_CERT_ARN }} HostedZoneId=${{ secrets.AWS_HOSTED_ZONE_ID }}"
           aws cloudformation deploy --template-file template.yml --stack-name ttg-site-$ENV_NAME --parameter-overrides $PARAMS --capabilities CAPABILITY_IAM
@@ -68,15 +70,15 @@ jobs:
           CF_ID=${aws cloudformation describe-stacks --stack-name ttg-site-$ENV_NAME --query "Stacks[0].Outputs[?OutputKey=='CloudFrontDistributionID'].OutputValue" --output text}
 
       - name: Install Angular CLI
-        working-directory: $GITHUB_WORKSPACE/client
+        working-directory: client
         run: npm install -g @angular/cli
 
       - name: Build the website
-        working-directory: $GITHUB_WORKSPACE/client
+        working-directory: client
         run: npm run build -- -c $ENV_NAME
 
       - name: Deploy the website
-        working-directory: $GITHUB_WORKSPACE/client
+        working-directory: client
         run: |
           aws s3 rm $S3_BUCKET --recursive
           aws s3 cp dist/client $S3_BUCKET/ --recursive
