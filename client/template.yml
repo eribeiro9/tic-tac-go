@@ -17,6 +17,9 @@ Parameters:
     Description: Hosted Zone Id
     Type: String
 
+Conditions:
+  IsProd: !Equals [!Ref EnvName, 'prod']
+
 Resources:
   S3Bucket:
     Type: AWS::S3::Bucket
@@ -90,6 +93,18 @@ Resources:
     Type: AWS::Route53::RecordSet
     Properties:
       Name: !Ref Url
+      Type: A
+      HostedZoneId: !Ref HostedZoneId
+      AliasTarget:
+        DNSName: !GetAtt CloudFrontDistribution.DomainName
+        EvaluateTargetHealth: false
+        HostedZoneId: Z2FDTNDATAQYW2
+
+  WildcardRoute53Record:
+    Condition: IsProd
+    Type: AWS::Route53::RecordSet
+    Properties:
+      Name: tictacgo.xyz
       Type: A
       HostedZoneId: !Ref HostedZoneId
       AliasTarget:
