@@ -61,7 +61,7 @@
               "serviceWorker": true,
               "ngswConfigPath": "ngsw-config.json"
             },
-            "production": {
+            "prod": {
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
