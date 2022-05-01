@@ -82,4 +82,4 @@ jobs:
           CF_ID=$(aws cloudformation describe-stacks --stack-name ttg-site-$ENV_NAME --query "Stacks[0].Outputs[?OutputKey=='CloudFrontDistributionID'].OutputValue" --output text)
           aws s3 rm $S3_BUCKET --recursive
           aws s3 cp dist/client $S3_BUCKET/ --recursive
-          aws cloudfront create-invalidation --distribution-id $CF_ID --paths \"/*\" | true
+          aws cloudfront create-invalidation --distribution-id $CF_ID --paths "/*" | true
