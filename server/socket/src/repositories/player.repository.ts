@@ -6,7 +6,7 @@ import { TableType } from '../enums/table-type.enum';
 export class PlayerRepository extends DynamoBase {
 
   constructor() {
-    super('tictacgo');
+    super(process.env.DYNAMO_NAME);
   }
 
   public async get(connectionId: string) {

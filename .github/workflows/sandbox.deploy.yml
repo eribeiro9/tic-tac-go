@@ -8,6 +8,7 @@ env:
   URL: sb.tictacgo.xyz
   CNAMES: sb.tictacgo.xyz
   WSS_URL: sb-wss.tictacgo.xyz
+  STAGE_NAME: Stage
 
 jobs:
   deploy-database:
@@ -46,8 +47,14 @@ jobs:
         run: |
           npm run prepare-dist
           aws cloudformation package --template template.yml --s3-bucket deployments.tictacgo.xyz --s3-prefix $ENV_NAME/socket --output-template template-export.yml
-          PARAMS="EnvName=$ENV_NAME DomainName=$WSS_URL CertArn=${{ secrets.AWS_SSH_CERT_ARN }} HostedZoneId=${{ secrets.AWS_HOSTED_ZONE_ID }}"
+          PARAMS="EnvName=$ENV_NAME DomainName=$WSS_URL CertArn=${{ secrets.AWS_SSH_CERT_ARN }} HostedZoneId=${{ secrets.AWS_HOSTED_ZONE_ID }} StageName=$STAGE_NAME"
           aws cloudformation deploy --template-file template-export.yml --stack-name ttg-socket-$ENV_NAME --parameter-overrides $PARAMS --capabilities CAPABILITY_NAMED_IAM
+
+      - name: Deploy the API Gateway
+        working-directory: server/socket
+        run: |
+          API_ID=$(aws cloudformation describe-stacks --stack-name ttg-socket-$ENV_NAME --query "Stacks[0].Outputs[?OutputKey=='WebsocketApi'].OutputValue" --output text)
+          aws apigatewayv2 create-deployment --api-id $API_ID --stage-name $STAGE_NAME
 
   deploy-site:
     runs-on: ubuntu-latest

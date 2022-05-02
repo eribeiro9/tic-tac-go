@@ -8,7 +8,7 @@ import { Game } from '../models/game.model';
 export class GameRepository extends DynamoBase {
 
   constructor() {
-    super('tictacgo');
+    super(process.env.DYNAMO_NAME);
   }
 
   public async get(gameId: string): Promise<Game | null> {

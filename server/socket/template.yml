@@ -15,6 +15,9 @@ Parameters:
   HostedZoneId:
     Description: Hosted Zone Id
     Type: String
+  StageName:
+    Description: Stage name for API Gateway
+    Type: String
 
 Resources:
   WebSocketsService:
@@ -30,6 +33,12 @@ Resources:
       Environment:
         Variables:
           NODE_ENV: production
+          DYNAMO_NAME: !Sub
+            - tictacgo-${EnvName}
+            - EnvName: !Ref EnvName
+          SSM_NAME: !Sub
+            - ttg-socket-url-${EnvName}
+            - EnvName: !Ref EnvName
       Role: !GetAtt LambdaRole.Arn
 
   LambdaPermission:
@@ -56,6 +65,18 @@ Resources:
         - arn:aws:iam::aws:policy/CloudWatchFullAccess
         - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
         - arn:aws:iam::aws:policy/AmazonAPIGatewayInvokeFullAccess
+        - arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess
+
+  WebsocketParameter:
+    Type: AWS::SSM::Parameter
+    Properties: 
+      Description: API Gateway URL for web sockets
+      Name: !Sub ttg-socket-url-${EnvName}
+      Type: String
+      Value: !Sub
+        - ${WebsocketId}.execute-api.${Region}.amazonaws.com/${StageName}
+        - WebsocketId: !Ref WebsocketApi
+          Region: !Ref AWS::Region
 
   WebsocketApi:
     DependsOn: WebSocketsService
@@ -65,21 +86,21 @@ Resources:
       ProtocolType: WEBSOCKET
       RouteSelectionExpression: $request.body.message
 
+  ConnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    DependsOn: LambdaIntegration
+    Properties:
+      ApiId: !Ref WebsocketApi
+      RouteKey: $connect
+      AuthorizationType: NONE
+      Target: !Join ["/", ["integrations", !Ref LambdaIntegration]]
+
   DisconnectRoute:
     Type: AWS::ApiGatewayV2::Route
     DependsOn: LambdaIntegration
     Properties:
       ApiId: !Ref WebsocketApi
       RouteKey: $disconnect
-      AuthorizationType: NONE
-      Target: !Join ["/", ["integrations", !Ref LambdaIntegration]]
-
-  GetDataOnConnectRoute:
-    Type: AWS::ApiGatewayV2::Route
-    DependsOn: LambdaIntegration
-    Properties:
-      ApiId: !Ref WebsocketApi
-      RouteKey: getDataOnConnect
       AuthorizationType: NONE
       Target: !Join ["/", ["integrations", !Ref LambdaIntegration]]
 
@@ -108,7 +129,7 @@ Resources:
   WebSocketsStage:
     Type: AWS::ApiGatewayV2::Stage
     Properties:
-      StageName: Stage
+      StageName: !Ref StageName
       Description: Initial Stage
       DeploymentId: !Ref InitDeployment
       ApiId: !Ref WebsocketApi
@@ -120,7 +141,7 @@ Resources:
     DependsOn:
       - WebsocketApi
       - SendMessageRoute
-      - GetDataOnConnectRoute
+      - ConnectRoute
       - DisconnectRoute
       - LambdaIntegration
     Type: AWS::ApiGatewayV2::Deployment
@@ -155,3 +176,8 @@ Resources:
         DNSName: !GetAtt CustomDomainName.RegionalDomainName
         EvaluateTargetHealth: false
         HostedZoneId: !GetAtt CustomDomainName.RegionalHostedZoneId
+
+Outputs:
+  WebsocketApi:
+    Description: TicTacGo API Gateway ID
+    Value: !Ref WebsocketApi

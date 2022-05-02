@@ -8,7 +8,7 @@ import { RandomUtils } from '../utils/random.utils';
 export class RequestRepository extends DynamoBase {
 
   constructor() {
-    super('tictacgo');
+    super(process.env.DYNAMO_NAME);
   }
 
   public async getPrivate(gameCode: string): Promise<GameRequest> {
