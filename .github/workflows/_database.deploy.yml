@@ -1,0 +1,25 @@
+name: Database Deployment Template
+
+on:
+  workflow_call:
+    inputs:
+      env_name:
+        description: The environment name
+        required: true
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+          
+      - name: Set environment variables
+        run: |
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set region us-east-1
+
+      - name: Deploy the database
+        working-directory: server/database
+        run: aws cloudformation deploy --template-file template.yml --stack-name ttg-table-${{ inputs.env_name }} --parameter-overrides EnvName=${{ inputs.env_name }} --capabilities CAPABILITY_IAM
