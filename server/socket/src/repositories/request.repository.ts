@@ -51,17 +51,7 @@ export class RequestRepository extends DynamoBase {
 
   public async createPrivate(connectionId: string): Promise<string> {
     try {
-      const gameCode = String.fromCharCode(
-        ...[0, 0, 0, 0].map((__, i) => {
-          if (i < 2) {
-            // A - Z
-            return RandomUtils.between(65, 90);
-          } else {
-            // 0 - 9
-            return RandomUtils.between(48, 57);
-          }
-        })
-      );
+      const gameCode = RandomUtils.gameCode();
       await this.putItem({
         pk: TableType.GameRequest + '#' + gameCode,
         sk: connectionId,
