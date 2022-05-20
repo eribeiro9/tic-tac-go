@@ -1,0 +1,39 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  DeploymentBucket:
+    Description: Name of bucket used for deployments
+    Type: String
+  DomainName:
+    Description: Base domain name
+    Type: String
+
+Resources:
+  Route53:
+    Type: AWS::Route53::HostedZone
+    Properties:
+      Name: !Ref DomainName
+
+  Certificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !Ref DomainName
+      ValidationMethod: DNS
+      SubjectAlternativeNames:
+        - !Sub "*.${DomainName}"
+      DomainValidationOptions:
+        - DomainName: !Ref DomainName
+          HostedZoneId: !Ref Route53
+
+  DeploymentS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref DeploymentBucket
+
+Outputs:
+  HostedZoneId:
+    Description: The Route53 hosted zone id
+    Value: !Ref Route53
+  CertificateARN:
+    Description: The ARN of the domain certificate
+    Value: !Ref Certificate

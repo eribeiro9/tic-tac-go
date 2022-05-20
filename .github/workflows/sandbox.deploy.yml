@@ -4,25 +4,37 @@ on:
   workflow_dispatch:
 
 jobs:
+  domain:
+    uses: ./.github/workflows/_domain.deploy.yml
+    with:
+      prefix: ttg
+      domain_name: tictacgo.xyz
+      deployment_bucket: deployments.tictacgo.xyz
+    secrets: inherit
+
   database:
     uses: ./.github/workflows/_database.deploy.yml
     with:
+      prefix: ttg
       env_name: sb
     secrets: inherit
 
   socket:
-    needs: database
+    needs: [domain, database]
     uses: ./.github/workflows/_socket.deploy.yml
     with:
+      prefix: ttg
       env_name: sb
       stage_name: Stage
       wss_url: sb-wss.tictacgo.xyz
+      deployment_bucket: deployments.tictacgo.xyz
     secrets: inherit
 
   website:
     needs: socket
     uses: ./.github/workflows/_website.deploy.yml
     with:
+      prefix: ttg
       env_name: sb
       url: sb.tictacgo.xyz
       cnames: sb.tictacgo.xyz

@@ -3,6 +3,10 @@ name: Website Deployment Template
 on:
   workflow_call:
     inputs:
+      prefix:
+        description: The app prefix
+        required: true
+        type: string
       env_name:
         description: The environment name
         required: true
@@ -31,8 +35,10 @@ jobs:
       - name: Deploy the website infrastructure
         working-directory: client
         run: |
-          PARAMS="EnvName=${{ inputs.env_name }} Url=${{ inputs.url }} CNAMEs=${{ inputs.cnames }} CertArn=${{ secrets.AWS_SSH_CERT_ARN }} HostedZoneId=${{ secrets.AWS_HOSTED_ZONE_ID }}"
-          aws cloudformation deploy --template-file template.yml --stack-name ttg-site-${{ inputs.env_name }} --parameter-overrides $PARAMS --capabilities CAPABILITY_IAM
+          CERT_ARN=$(aws cloudformation describe-stacks --stack-name ${{ inputs.prefix }}-domain --query "Stacks[0].Outputs[?OutputKey=='CertificateARN'].OutputValue" --output text)
+          HOSTED_ZONE_ID=$(aws cloudformation describe-stacks --stack-name ${{ inputs.prefix }}-domain --query "Stacks[0].Outputs[?OutputKey=='HostedZoneId'].OutputValue" --output text)
+          PARAMS="EnvName=${{ inputs.env_name }} Url=${{ inputs.url }} CNAMEs=${{ inputs.cnames }} CertArn=$CERT_ARN HostedZoneId=$HOSTED_ZONE_ID"
+          aws cloudformation deploy --template-file template.yml --stack-name ${{ inputs.prefix }}-site-${{ inputs.env_name }} --parameter-overrides $PARAMS --capabilities CAPABILITY_IAM
 
       - name: Install Angular CLI
         working-directory: client
@@ -45,8 +51,8 @@ jobs:
       - name: Deploy the website
         working-directory: client
         run: |
-          S3_BUCKET=$(aws cloudformation describe-stacks --stack-name ttg-site-${{ inputs.env_name }} --query "Stacks[0].Outputs[?OutputKey=='S3BucketUrl'].OutputValue" --output text)
-          CF_ID=$(aws cloudformation describe-stacks --stack-name ttg-site-${{ inputs.env_name }} --query "Stacks[0].Outputs[?OutputKey=='CloudFrontDistributionID'].OutputValue" --output text)
+          S3_BUCKET=$(aws cloudformation describe-stacks --stack-name ${{ inputs.prefix }}-site-${{ inputs.env_name }} --query "Stacks[0].Outputs[?OutputKey=='S3BucketUrl'].OutputValue" --output text)
+          CF_ID=$(aws cloudformation describe-stacks --stack-name ${{ inputs.prefix }}-site-${{ inputs.env_name }} --query "Stacks[0].Outputs[?OutputKey=='CloudFrontDistributionID'].OutputValue" --output text)
           aws s3 rm $S3_BUCKET --recursive
           aws s3 cp dist/client $S3_BUCKET/ --recursive
           aws cloudfront create-invalidation --distribution-id $CF_ID --paths "/*" | true

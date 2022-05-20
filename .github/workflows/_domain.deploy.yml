@@ -1,4 +1,4 @@
-name: Database Deployment Template
+name: Domain Deployment Template
 
 on:
   workflow_call:
@@ -7,8 +7,12 @@ on:
         description: The app prefix
         required: true
         type: string
-      env_name:
-        description: The environment name
+      domain_name:
+        description: The main URL
+        required: true
+        type: string
+      deployment_bucket:
+        description: The S3 bucket used for deployments
         required: true
         type: string
 
@@ -24,6 +28,6 @@ jobs:
           aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws configure set region us-east-1
 
-      - name: Deploy the database
-        working-directory: server/database
-        run: aws cloudformation deploy --template-file template.yml --stack-name ${{ inputs.prefix }}-table-${{ inputs.env_name }} --parameter-overrides EnvName=${{ inputs.env_name }} --capabilities CAPABILITY_IAM
+      - name: Deploy the domain
+        working-directory: server/domain
+        run: aws cloudformation deploy --template-file template.yml --stack-name ${{ inputs.prefix }}-domain --parameter-overrides DomainName=${{ inputs.domain_name }} DeploymentBucket=${{ inputs.deployment_bucket }} --capabilities CAPABILITY_IAM
